@@ -48,7 +48,11 @@ namespace RegisterFormWinforms
 
             dtDOB.MaxDate = DateTime.Today;
 
+
         }
+
+
+
 
 
         void LoadEmployeeNames()
@@ -393,9 +397,9 @@ namespace RegisterFormWinforms
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtEntryNo.Text))
+            if (selectedId == 0)
             {
-                MessageBox.Show("Select employee to delete");
+                MessageBox.Show("Select employee from grid first");
                 return;
             }
 
@@ -417,7 +421,7 @@ namespace RegisterFormWinforms
                     SqlCommand cmd = new SqlCommand("sp_DeleteEmployee", con);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.AddWithValue("@EntryNo", txtEntryNo.Text.Trim());
+                    cmd.Parameters.AddWithValue("@Id", selectedId);
 
                     int rows = cmd.ExecuteNonQuery();
 
@@ -676,14 +680,14 @@ namespace RegisterFormWinforms
         {
             if (e.KeyCode == Keys.Enter)
             {
-                txtAddress.Focus();
+                txtAge.Focus();
             }
         }
 
         private void txtAge_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                cmbBlood.Focus();
+                dtDOB.Focus();
         }
 
         private void txtEntryNo_KeyDown(object sender, KeyEventArgs e)
@@ -695,37 +699,37 @@ namespace RegisterFormWinforms
         private void dtDOB_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtEmail.Focus();
+                rMale.Focus();
         }
 
         private void txtAddress_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtQualification.Focus();
+                cmbDepartment.Focus();
         }
 
         private void cmbBlood_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                cmbDepartment.Focus();
+                txtPhone.Focus();
         }
 
         private void txtEmail_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtSalary.Focus();
+                txtQualification.Focus();
         }
 
         private void txtQualification_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtPhone.Focus();
+                txtSalary.Focus();
         }
 
         private void txtPhone_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                rMale.Focus();
+                txtEmail.Focus();
         }
 
         private void cmbDepartment_KeyDown(object sender, KeyEventArgs e)
@@ -737,31 +741,31 @@ namespace RegisterFormWinforms
         private void cmbDesignation_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                dtDOB.Focus();
+                btnBrowse.Focus();
         }
 
         private void rMale_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtAge.Focus();
+                cmbBlood.Focus();
         }
 
         private void rFemale_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtAge.Focus();
+                cmbBlood.Focus();
         }
 
         private void rOther_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtAge.Focus();
+                cmbBlood.Focus();
         }
 
         private void txtSalary_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                btnBrowse.Focus();
+                txtAddress.Focus();
         }
     }
 }
