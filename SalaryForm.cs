@@ -13,6 +13,8 @@ namespace RegisterFormWinforms
         {
             InitializeComponent();
 
+            dtDate.MaxDate = DateTime.Today;
+
             txtEntryNo.Text = entryNo;
             txtName.Text = name;
             txtSalary.Text = salary;
@@ -213,25 +215,23 @@ namespace RegisterFormWinforms
 
                 try
                 {
-                    string query = @"DELETE FROM EmployeeSalary 
-                             WHERE EntryNo=@EntryNo AND Month=@Month";
+                    SqlCommand cmd = new SqlCommand("sp_DeleteSalary", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@EntryNo", txtEntryNo.Text);
                     cmd.Parameters.AddWithValue("@Month", cmbMonth.Text);
 
-                    int rows = cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
 
-                    if (rows > 0)
-                        MessageBox.Show("Salary Deleted Successfully 🗑");
-                    else
-                        MessageBox.Show("No salary found for selected month");
-
+                    MessageBox.Show("Salary Deleted Successfully 🗑");
                     ClearForm();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error : " + ex.Message);
+                    if (ex.Message.Contains("Salary not found"))
+                        MessageBox.Show("No salary found for selected month");
+                    else
+                        MessageBox.Show("Error : " + ex.Message);
                 }
             }
         }
@@ -393,10 +393,9 @@ namespace RegisterFormWinforms
 
                 try
                 {
-                    string query = @"SELECT Total FROM EmployeeSalary 
-                             WHERE EntryNo=@EntryNo AND Month=@Month";
+                    SqlCommand cmd = new SqlCommand("sp_GetTotalSalary", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@EntryNo", txtSearchEntryNo.Text);
                     cmd.Parameters.AddWithValue("@Month", cmbSearchMonths.Text);
 
@@ -406,19 +405,37 @@ namespace RegisterFormWinforms
                     {
                         txtShowTotalSalary.Text = Convert.ToDecimal(result).ToString("0.00");
                     }
-                    else
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("Salary not found"))
                     {
                         MessageBox.Show("Salary not found for this month");
                         txtShowTotalSalary.Clear();
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error : " + ex.Message);
+                    else
+                    {
+                        MessageBox.Show("Error : " + ex.Message);
+                    }
                 }
             }
         }
 
-        
+        private void txtSearchEntryNo_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                cmbSearchMonths.Focus();
+        }
+
+        private void cmbSearchMonths_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                btnGetSalary.Focus();
+        }
+
+        private void cmbSearchMonths_Enter(object sender, EventArgs e)
+        {
+            cmbSearchMonths.DroppedDown = true;
+        }
     }
 }

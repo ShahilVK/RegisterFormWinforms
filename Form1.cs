@@ -138,9 +138,10 @@ namespace RegisterFormWinforms
             {
                 con.Open();
 
-                string query = "SELECT Id, Name FROM Employees";
+                SqlCommand cmd = new SqlCommand("sp_GetEmployeeNames", con);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
@@ -409,7 +410,7 @@ namespace RegisterFormWinforms
                     SetRowColors();
 
 
-                    btnUpdate.Enabled = true;    // enable
+                    btnUpdate.Enabled = true;   
                     btnDelete.Enabled = true;
                 }
                 catch (Exception ex)
@@ -464,10 +465,18 @@ namespace RegisterFormWinforms
                     cmd.Parameters.AddWithValue("@Email", txtEmail.Text.Trim());
                     cmd.Parameters.AddWithValue("@IsActive", active);
 
+                    SqlParameter photoParam = new SqlParameter("@Photo", SqlDbType.VarBinary);
+
                     if (imgBytes != null)
-                        cmd.Parameters.AddWithValue("@Photo", imgBytes);
+                    {
+                        photoParam.Value = imgBytes;
+                    }
                     else
-                        cmd.Parameters.AddWithValue("@Photo", DBNull.Value);
+                    {
+                        photoParam.Value = DBNull.Value;
+                    }
+
+                    cmd.Parameters.Add(photoParam);
 
                     int result = cmd.ExecuteNonQuery();
 
@@ -563,6 +572,7 @@ namespace RegisterFormWinforms
 
             GenerateEntryNo();
             selectedId = 0;
+            SetRowColors();
 
             btnUpdate.Enabled = false;
             btnDelete.Enabled = false;
@@ -573,7 +583,11 @@ namespace RegisterFormWinforms
             if (e.RowIndex < 0) return;
 
             DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
-            selectedId = Convert.ToInt32(row.Cells["Id"].Value);
+            //selectedId = Convert.ToInt32(row.Cells["Id"].Value);
+            if (row.Cells["Id"].Value != DBNull.Value)
+                selectedId = Convert.ToInt32(row.Cells["Id"].Value);
+            else
+                selectedId = 0;
 
             txtEntryNo.Text = row.Cells["EntryNo"].Value?.ToString();
             txtName.Text = row.Cells["Name"].Value?.ToString();
@@ -590,20 +604,37 @@ namespace RegisterFormWinforms
 
             if (row.Cells["EntryDate"].Value != DBNull.Value)
                 dtEntryDate.Value = Convert.ToDateTime(row.Cells["EntryDate"].Value);
+            else
+            dtEntryDate.Value = DateTime.Today;
 
             if (row.Cells["DOB"].Value != DBNull.Value)
                 dtDOB.Value = Convert.ToDateTime(row.Cells["DOB"].Value);
+            else
+                dtDOB.Value = DateTime.Today.AddYears(-18);
 
-            string gender = row.Cells["Gender"].Value?.ToString();
+            //string gender = row.Cells["Gender"].Value?.ToString();
+            //if (gender == "Male")
+            //    rMale.Checked = true;
+            //else
+            //    rFemale.Checked = true;
+
+            string gender = row.Cells["Gender"].Value?.ToString() ?? "";
             if (gender == "Male")
                 rMale.Checked = true;
-            else
+            else if (gender == "Female")
                 rFemale.Checked = true;
+            else
+            {
+                rMale.Checked = false;
+                rFemale.Checked = false;
+            }
 
             if (row.Cells["IsActive"].Value != DBNull.Value)
                 chkActive.Checked = Convert.ToBoolean(row.Cells["IsActive"].Value);
+            else
+            chkActive.Checked = false;
 
-            if (row.Cells["Photo"].Value != DBNull.Value)
+            if (row.Cells["Photo"].Value != DBNull.Value && row.Cells["photo"].Value !=null)
             {
                 byte[] img = (byte[])row.Cells["Photo"].Value;
                 MemoryStream ms = new MemoryStream(img);
@@ -885,11 +916,11 @@ namespace RegisterFormWinforms
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (txtName.Text == "")
-            {
-                MessageBox.Show("Select employee first");
-                return;
-            }
+            //if (txtName.Text == "")
+            //{
+            //    MessageBox.Show("Select employee first");
+            //    return;
+            //}
 
             SalaryForm sf = new SalaryForm(
                 txtEntryNo.Text,
@@ -898,6 +929,49 @@ namespace RegisterFormWinforms
             );
 
             sf.Show();
+        }
+
+        private void cmbBlood_Enter(object sender, EventArgs e)
+        {
+            cmbBlood.DroppedDown = true;
+        }
+
+        private void cmbDepartment_Enter(object sender, EventArgs e)
+        {
+            cmbDepartment.DroppedDown = false;
+        }
+
+        private void cmbDesignation_Enter(object sender, EventArgs e)
+        {
+            cmbDesignation.DroppedDown = true;
+        }
+
+        private void btnBrowse_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                btnSave.Focus();
+        }
+
+        private void btnRemoveImage_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image == null)
+            {
+                MessageBox.Show("No image to remove");
+                return;
+            }
+
+            DialogResult result = MessageBox.Show(
+                "Remove selected image?",
+                "Confirm",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                pictureBox1.Image = null;
+                imagePath = "";
+                MessageBox.Show("Image removed");
+            }
         }
     }
 }
