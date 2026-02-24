@@ -45,18 +45,18 @@ namespace RegisterFormWinforms
             dataGridView1.BackgroundColor = Color.White;
             dataGridView1.BorderStyle = BorderStyle.None;
             dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromArgb(59, 130, 246); // Modern Blue
+            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromArgb(59, 130, 246); 
             dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
             dataGridView1.DefaultCellStyle.BackColor = Color.White;
             dataGridView1.DefaultCellStyle.ForeColor = Color.FromArgb(33, 37, 41);
             dataGridView1.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
-            dataGridView1.DefaultCellStyle.Padding = new Padding(5); // Gives breathing room to text
+            dataGridView1.DefaultCellStyle.Padding = new Padding(5); 
 
             dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
 
             dataGridView1.EnableHeadersVisualStyles = false;
             dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(15, 23, 42); // Dark Navy
+            dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(15, 23, 42); 
             dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10.5F, FontStyle.Bold);
             dataGridView1.ColumnHeadersHeight = 45;
@@ -67,7 +67,7 @@ namespace RegisterFormWinforms
                 if (c is TextBox txt)
                 {
                     txt.BorderStyle = BorderStyle.FixedSingle;
-                    txt.Enter += (s, e) => txt.BackColor = Color.FromArgb(241, 245, 249); // Subtle Focus Color
+                    txt.Enter += (s, e) => txt.BackColor = Color.FromArgb(241, 245, 249); 
                     txt.Leave += (s, e) => txt.BackColor = Color.White;
                 }
                 else if (c is ComboBox cmb)
@@ -215,11 +215,11 @@ namespace RegisterFormWinforms
 
                     if (active == true)
                     {
-                        row.DefaultCellStyle.BackColor = Color.LightGreen;   // Active = Green
+                        row.DefaultCellStyle.BackColor = Color.LightGreen;   
                     }
                     else
                     {
-                        row.DefaultCellStyle.BackColor = Color.LightCoral;   // Inactive = Red
+                        row.DefaultCellStyle.BackColor = Color.LightCoral;   
                     }
                 }
             }
@@ -561,6 +561,9 @@ namespace RegisterFormWinforms
             else
                 dtDOB.Value = dtDOB.MaxDate;
 
+            GenerateEntryNo();
+            selectedId = 0;
+
             btnUpdate.Enabled = false;
             btnDelete.Enabled = false;
         }
@@ -614,7 +617,7 @@ namespace RegisterFormWinforms
             btnUpdate.Enabled = true;
             btnDelete.Enabled = true;
             btnSave.Enabled = false;
-            btnClear.Enabled = false;
+            btnClear.Enabled = true;
         }
 
         private void btnLoad_Click(object sender, EventArgs e)
@@ -744,7 +747,6 @@ namespace RegisterFormWinforms
                     btnUpdate.Enabled = true;
                     btnDelete.Enabled = true;
                     btnSave.Enabled = false;
-                    //btnClear.Enabled = false;
                 }
                 dr.Close();
             }

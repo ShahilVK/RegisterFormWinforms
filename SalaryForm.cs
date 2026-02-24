@@ -45,7 +45,15 @@ namespace RegisterFormWinforms
             txtExpenses.TextChanged += (s, e) => CalculateTotal();
             txtMessExpenses.TextChanged += (s, e) => CalculateTotal();
             txtAdvance.TextChanged += (s, e) => CalculateTotal();
+
+            txtLWP.ReadOnly = true;
+            txtWorkingDays.KeyPress += OnlyNumber_KeyPress;
+            txtPresentDays.KeyPress += OnlyNumber_KeyPress;
+
+            txtWorkingDays.TextChanged += (s, e) => CalculateLWP();
+            txtPresentDays.TextChanged += (s, e) => CalculateLWP();
         }
+
 
         private void SalaryForm_Load(object sender, EventArgs e)
         {
@@ -67,6 +75,22 @@ namespace RegisterFormWinforms
                 txtHRA.Text = hra.ToString("0.00");
                 txtConveyance.Text = conveyance.ToString("0.00");
             }
+        }
+
+        void CalculateLWP()
+        {
+            int working = 0;
+            int present = 0;
+
+            int.TryParse(txtWorkingDays.Text, out working);
+            int.TryParse(txtPresentDays.Text, out present);
+
+            int lwp = working - present;
+
+            if (lwp < 0)
+                lwp = 0;
+
+            txtLWP.Text = lwp.ToString();
         }
 
         private void CalculateTotal()
@@ -128,7 +152,10 @@ namespace RegisterFormWinforms
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error : " + ex.Message);
+                    if (ex.Message.Contains("Salary already added"))
+                        MessageBox.Show("⚠ Salary already saved for this month");
+                    else
+                        MessageBox.Show("Error : " + ex.Message);
                 }
             }
         }
@@ -156,5 +183,242 @@ namespace RegisterFormWinforms
             if (e.KeyChar == '.' && txt.Text.Contains("."))
                 e.Handled = true;
         }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (txtEntryNo.Text == "")
+            {
+                MessageBox.Show("Select employee first");
+                return;
+            }
+
+            if (cmbMonth.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select month to delete salary");
+                return;
+            }
+
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to delete this salary?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result == DialogResult.No)
+                return;
+
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                con.Open();
+
+                try
+                {
+                    string query = @"DELETE FROM EmployeeSalary 
+                             WHERE EntryNo=@EntryNo AND Month=@Month";
+
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@EntryNo", txtEntryNo.Text);
+                    cmd.Parameters.AddWithValue("@Month", cmbMonth.Text);
+
+                    int rows = cmd.ExecuteNonQuery();
+
+                    if (rows > 0)
+                        MessageBox.Show("Salary Deleted Successfully 🗑");
+                    else
+                        MessageBox.Show("No salary found for selected month");
+
+                    ClearForm();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error : " + ex.Message);
+                }
+            }
+        }
+
+        private void txtWorkingDays_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtPresentDays.Focus();
+            }
+        }
+
+        private void txtPresentDays_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtLWP.Focus();
+            }
+        }
+
+        private void txtLWP_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtIncentive.Focus();
+            }
+        }
+
+        private void txtIncentive_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtExpenses.Focus();
+            }
+        }
+
+        private void txtExpenses_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtMessExpenses.Focus();
+            }
+        }
+
+        private void txtMessExpenses_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtAdvance.Focus();
+            }
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (txtEntryNo.Text == "")
+            {
+                MessageBox.Show("Select employee first");
+                return;
+            }
+
+            if (cmbMonth.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select month");
+                return;
+            }
+
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to update this salary?",
+                "Confirm Update",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.No)
+                return;
+
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                con.Open();
+
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("sp_UpdateSalary", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@EntryNo", txtEntryNo.Text);
+                    cmd.Parameters.AddWithValue("@Month", cmbMonth.Text);
+                    cmd.Parameters.AddWithValue("@Salary", Convert.ToDecimal(txtSalary.Text));
+                    cmd.Parameters.AddWithValue("@Basic", Convert.ToDecimal(txtBasicPay.Text));
+                    cmd.Parameters.AddWithValue("@HRA", Convert.ToDecimal(txtHRA.Text));
+                    cmd.Parameters.AddWithValue("@Conv", Convert.ToDecimal(txtConveyance.Text));
+                    cmd.Parameters.AddWithValue("@Inc", string.IsNullOrWhiteSpace(txtIncentive.Text) ? 0 : Convert.ToDecimal(txtIncentive.Text));
+                    cmd.Parameters.AddWithValue("@Exp", string.IsNullOrWhiteSpace(txtExpenses.Text) ? 0 : Convert.ToDecimal(txtExpenses.Text));
+                    cmd.Parameters.AddWithValue("@Mess", string.IsNullOrWhiteSpace(txtMessExpenses.Text) ? 0 : Convert.ToDecimal(txtMessExpenses.Text));
+                    cmd.Parameters.AddWithValue("@Adv", string.IsNullOrWhiteSpace(txtAdvance.Text) ? 0 : Convert.ToDecimal(txtAdvance.Text));
+                    cmd.Parameters.AddWithValue("@Total", Convert.ToDecimal(txtTotalSalary.Text));
+                    cmd.Parameters.AddWithValue("@Date", dtDate.Value);
+
+                    cmd.ExecuteNonQuery();
+
+                    MessageBox.Show("Salary Updated Successfully ✏");
+                    ClearForm();
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("Salary record not found"))
+                        MessageBox.Show("Salary record not found to update");
+                    else
+                        MessageBox.Show("Error : " + ex.Message);
+                }
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "Do you want to clear all fields?",
+                "Clear Form",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.No)
+                return;
+
+            txtIncentive.Clear();
+            txtExpenses.Clear();
+            txtMessExpenses.Clear();
+            txtAdvance.Clear();
+            txtWorkingDays.Clear();
+            txtPresentDays.Clear();
+            txtLWP.Clear();
+            txtTotalSalary.Clear();
+
+            cmbMonth.SelectedIndex = DateTime.Now.Month - 1;
+            dtDate.Value = DateTime.Today;
+
+            AutoFillSalaryBreakup();
+
+            txtWorkingDays.Focus();
+        }
+
+        private void btnGetSalary_Click(object sender, EventArgs e)
+        {
+            if (txtSearchEntryNo.Text == "")
+            {
+                MessageBox.Show("Enter Entry No");
+                txtSearchEntryNo.Focus();
+                return;
+            }
+
+            if (cmbSearchMonths.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select Month");
+                return;
+            }
+
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                con.Open();
+
+                try
+                {
+                    string query = @"SELECT Total FROM EmployeeSalary 
+                             WHERE EntryNo=@EntryNo AND Month=@Month";
+
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.AddWithValue("@EntryNo", txtSearchEntryNo.Text);
+                    cmd.Parameters.AddWithValue("@Month", cmbSearchMonths.Text);
+
+                    object result = cmd.ExecuteScalar();
+
+                    if (result != null)
+                    {
+                        txtShowTotalSalary.Text = Convert.ToDecimal(result).ToString("0.00");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Salary not found for this month");
+                        txtShowTotalSalary.Clear();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error : " + ex.Message);
+                }
+            }
+        }
+
+        
     }
 }
