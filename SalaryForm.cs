@@ -54,6 +54,10 @@ namespace RegisterFormWinforms
 
             txtWorkingDays.TextChanged += (s, e) => CalculateLWP();
             txtPresentDays.TextChanged += (s, e) => CalculateLWP();
+
+            this.Shown += SalaryForm_Shown;
+
+
         }
 
 
@@ -62,7 +66,14 @@ namespace RegisterFormWinforms
             dtDate.Value = DateTime.Today;
             cmbMonth.SelectedIndex = DateTime.Now.Month - 1;
 
-            AutoFillSalaryBreakup(); 
+            AutoFillSalaryBreakup();
+
+            
+        }
+
+        private void SalaryForm_Shown(object sender, EventArgs e)
+        {
+            cmbMonth.Focus();
         }
 
         void AutoFillSalaryBreakup()
@@ -436,6 +447,17 @@ namespace RegisterFormWinforms
         private void cmbSearchMonths_Enter(object sender, EventArgs e)
         {
             cmbSearchMonths.DroppedDown = true;
+        }
+
+        private void cmbMonth_Enter(object sender, EventArgs e)
+        {
+            cmbMonth.DroppedDown = true;
+        }
+
+        private void cmbMonth_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                txtWorkingDays.Focus();
         }
     }
 }

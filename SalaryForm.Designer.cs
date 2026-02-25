@@ -414,6 +414,8 @@ namespace RegisterFormWinforms
             this.cmbMonth.Name = "cmbMonth";
             this.cmbMonth.Size = new System.Drawing.Size(200, 31);
             this.cmbMonth.TabIndex = 29;
+            this.cmbMonth.Enter += new System.EventHandler(this.cmbMonth_Enter);
+            this.cmbMonth.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmbMonth_KeyDown);
             // 
             // txtTotalSalary
             // 

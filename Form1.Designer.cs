@@ -651,7 +651,6 @@ namespace RegisterFormWinforms
             this.btnBrowse.Text = "Browse Photo";
             this.btnBrowse.UseVisualStyleBackColor = false;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-            this.btnBrowse.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnBrowse_KeyDown);
 
             // btnRemoveImage
             this.btnRemoveImage = new System.Windows.Forms.Button();

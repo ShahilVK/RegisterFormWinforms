@@ -16,6 +16,9 @@ namespace RegisterFormWinforms
         int selectedId = 0;
         string imagePath = "";
 
+        bool isClearing = false;
+
+
         public Form1()
         {
             InitializeComponent();
@@ -33,6 +36,8 @@ namespace RegisterFormWinforms
 
             ApplyPremiumUI();
         }
+
+        //private bool isClearing = false;
 
         private void ApplyPremiumUI()
         {
@@ -130,7 +135,17 @@ namespace RegisterFormWinforms
 
             btnUpdate.Enabled = false;   
             btnDelete.Enabled = false;
+
+            dataGridView1.DataBindingComplete += dataGridView1_DataBindingComplete;
+
         }
+
+        private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            SetRowColors();
+        }
+
+
 
         void LoadEmployeeNames()
         {
@@ -197,7 +212,7 @@ namespace RegisterFormWinforms
                         nextNo = Convert.ToInt32(result);
                     }
 
-                    txtEntryNo.Text = nextNo.ToString("D3");
+                    txtEntryNo.Text = nextNo.ToString("D2");
                 }
             }
             catch (Exception ex)
@@ -228,6 +243,7 @@ namespace RegisterFormWinforms
 
         private void txtName_Leave(object sender, EventArgs e)
         {
+            if (isClearing) return;
             string name = txtName.Text.Trim();
 
             if (name == "")
@@ -253,21 +269,25 @@ namespace RegisterFormWinforms
 
         private void txtAge_Leave(object sender, EventArgs e)
         {
+            if (isClearing) return;
             if (string.IsNullOrWhiteSpace(txtAge.Text))
                 return;
 
             int age = Convert.ToInt32(txtAge.Text);
 
-            if (age < 18 || age > 60)
-            {
-                MessageBox.Show("Age must be between 18 and 60");
-                txtAge.Focus();
-            }
+            //if (age < 18 || age > 60)
+            //{
+            //    MessageBox.Show("Age must be between 18 and 60");
+            //    txtAge.Focus();
+            //}
         }
 
         private void txtPhone_Leave(object sender, EventArgs e)
         {
+            if (isClearing) return;
             string phone = txtPhone.Text.Trim();
+
+            if (phone == "") return;
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(phone, @"^\d{10}$"))
             {
@@ -278,7 +298,9 @@ namespace RegisterFormWinforms
 
         private void txtEmail_Leave(object sender, EventArgs e)
         {
+            if (isClearing) return;
             string email = txtEmail.Text.Trim().ToLower();
+            if (email == "") return;
 
             if (string.IsNullOrWhiteSpace(email))
             {
@@ -325,6 +347,7 @@ namespace RegisterFormWinforms
 
         private void txtSalary_Leave(object sender, EventArgs e)
         {
+            if (isClearing) return;
             if (string.IsNullOrWhiteSpace(txtSalary.Text))
             {
                 MessageBox.Show("Salary is required");
@@ -360,6 +383,15 @@ namespace RegisterFormWinforms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+
+            DialogResult result = MessageBox.Show(
+        "Do you want to save this employee?",
+        "Confirm Save",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Question);
+
+            if (result == DialogResult.No)
+                return;
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 con.Open();
@@ -434,7 +466,15 @@ namespace RegisterFormWinforms
 
                 try
                 {
-                    string gender = rMale.Checked ? "Male" : "Female";
+                   
+                    string gender = "";
+
+                    if (rMale.Checked)
+                        gender = "Male";
+                    else if (rFemale.Checked)
+                        gender = "Female";
+                    else if (rOther.Checked)
+                        gender = "Other";
                     bool active = chkActive.Checked;
                     byte[] imgBytes = null;
 
@@ -525,12 +565,36 @@ namespace RegisterFormWinforms
                     int rows = cmd.ExecuteNonQuery();
 
                     if (rows > 0)
+                    {
                         MessageBox.Show("Deleted Successfully 🗑");
+
+                        selectedId = 0;
+
+                        foreach (Control c in this.Controls)
+                        {
+                            if (c is TextBox && c.Name != "txtEntryNo")
+                                ((TextBox)c).Clear();
+                        }
+
+                        cmbBlood.SelectedIndex = -1;
+                        cmbDepartment.SelectedIndex = -1;
+                        cmbDesignation.SelectedIndex = -1;
+
+                        rMale.Checked = false;
+                        rFemale.Checked = false;
+                        rOther.Checked = false;
+
+                        chkActive.Checked = true;
+                        pictureBox1.Image = null;
+
+                        GenerateEntryNo();   
+                    }
                     else
+                    {
                         MessageBox.Show("Delete Failed");
+                    }
 
                     LoadGrid();
-                    GenerateEntryNo();
                     SetRowColors();
                 }
                 catch (Exception ex)
@@ -543,6 +607,9 @@ namespace RegisterFormWinforms
 
         private void btnClear_Click(object sender, EventArgs e)
         {
+            isClearing = true;
+            this.ActiveControl = null;
+
             foreach (Control c in this.Controls)
             {
                 if (c is TextBox && c.Name != "txtEntryNo")
@@ -576,6 +643,7 @@ namespace RegisterFormWinforms
 
             btnUpdate.Enabled = false;
             btnDelete.Enabled = false;
+            isClearing = false;
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -583,7 +651,6 @@ namespace RegisterFormWinforms
             if (e.RowIndex < 0) return;
 
             DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
-            //selectedId = Convert.ToInt32(row.Cells["Id"].Value);
             if (row.Cells["Id"].Value != DBNull.Value)
                 selectedId = Convert.ToInt32(row.Cells["Id"].Value);
             else
@@ -612,12 +679,7 @@ namespace RegisterFormWinforms
             else
                 dtDOB.Value = DateTime.Today.AddYears(-18);
 
-            //string gender = row.Cells["Gender"].Value?.ToString();
-            //if (gender == "Male")
-            //    rMale.Checked = true;
-            //else
-            //    rFemale.Checked = true;
-
+        
             string gender = row.Cells["Gender"].Value?.ToString() ?? "";
             if (gender == "Male")
                 rMale.Checked = true;
@@ -665,6 +727,8 @@ namespace RegisterFormWinforms
             {
                 pictureBox1.Image = Image.FromFile(op.FileName);
                 imagePath = op.FileName;
+
+                btnSave.Focus();
             }
         }
 
@@ -938,20 +1002,14 @@ namespace RegisterFormWinforms
 
         private void cmbDepartment_Enter(object sender, EventArgs e)
         {
-            cmbDepartment.DroppedDown = false;
+            cmbDepartment.DroppedDown = true;
         }
 
         private void cmbDesignation_Enter(object sender, EventArgs e)
         {
             cmbDesignation.DroppedDown = true;
         }
-
-        private void btnBrowse_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                btnSave.Focus();
-        }
-
+    
         private void btnRemoveImage_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image == null)
