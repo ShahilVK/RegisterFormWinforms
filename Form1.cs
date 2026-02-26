@@ -126,6 +126,8 @@ namespace RegisterFormWinforms
         {
             LoadGrid();
             GenerateEntryNo();
+            cmbUsers.SelectedIndexChanged += cmbUsers_SelectedIndexChanged;
+
             dtDOB.MaxDate = DateTime.Today;
 
 
@@ -137,6 +139,18 @@ namespace RegisterFormWinforms
             {
                 txtName.Focus();
             }));
+
+            cmbDesignation.Items.Insert(0, "Select Designation");
+            cmbDesignation.SelectedIndex = 0;
+
+            cmbDepartment.Items.Insert(0, "Select Department");
+            cmbDepartment.SelectedIndex = 0;
+
+            cmbBlood.Items.Insert(0, "Select Blood Group");
+            cmbBlood.SelectedIndex = 0;
+
+            cmbUsers.Items.Insert(0, "Select Employee");
+            cmbUsers.SelectedIndex = 0;
 
         }
 
@@ -191,12 +205,20 @@ namespace RegisterFormWinforms
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
+                cmbUsers.DataSource = null;
+                cmbUsers.Items.Clear();
+
+                DataRow dr = dt.NewRow();
+                dr["Id"] = 0;
+                dr["Name"] = "Select Employee";
+                dt.Rows.InsertAt(dr, 0);
+
                 cmbUsers.DataSource = dt;
                 cmbUsers.DisplayMember = "Name";
                 cmbUsers.ValueMember = "Id";
             }
 
-            cmbUsers.SelectedIndex = -1;
+            cmbUsers.SelectedIndex = 0;
         }
 
         void LoadGrid()
@@ -295,14 +317,6 @@ namespace RegisterFormWinforms
                 txtAge.Focus();
                 return false;
             }
-
-            //if (age < 18 || age > 60)
-            //{
-            //    MessageBox.Show("Age must be between 18 and 60");
-            //    txtAge.Focus();
-            //    return false;
-            //}
-
             return true;
         }
 
@@ -408,12 +422,6 @@ namespace RegisterFormWinforms
                 return false;
             }
 
-            //if (sal > 200000)
-            //{
-            //    MessageBox.Show("Salary too high");
-            //    txtSalary.Focus();
-            //    return false;
-            //}
 
             txtSalary.Text = sal.ToString("0.00");
             return true;
@@ -436,21 +444,21 @@ namespace RegisterFormWinforms
                 return false;
             }
 
-            if (cmbBlood.SelectedIndex == -1)
+            if (cmbBlood.SelectedIndex == 0)
             {
                 MessageBox.Show("Select blood group");
                 cmbBlood.Focus();
                 return false;
             }
 
-            if (cmbDepartment.SelectedIndex == -1)
+            if (cmbDepartment.SelectedIndex == 0)
             {
                 MessageBox.Show("Select department");
                 cmbDepartment.Focus();
                 return false;
             }
 
-            if (cmbDesignation.SelectedIndex == -1)
+            if (cmbDesignation.SelectedIndex == 0)
             {
                 MessageBox.Show("Select designation");
                 cmbDesignation.Focus();
@@ -735,9 +743,10 @@ namespace RegisterFormWinforms
                                 ((TextBox)c).Clear();
                         }
 
-                        cmbBlood.SelectedIndex = -1;
-                        cmbDepartment.SelectedIndex = -1;
-                        cmbDesignation.SelectedIndex = -1;
+                        cmbBlood.SelectedIndex = 0;
+                        cmbDepartment.SelectedIndex = 0;
+                        cmbDesignation.SelectedIndex = 0;
+                        cmbUsers.SelectedIndex = 0;
 
                         rMale.Checked = false;
                         rFemale.Checked = false;
@@ -777,9 +786,10 @@ namespace RegisterFormWinforms
                 }
             }
 
-            cmbBlood.SelectedIndex = -1;
-            cmbDepartment.SelectedIndex = -1;
-            cmbDesignation.SelectedIndex = -1;
+            cmbBlood.SelectedIndex = 0;
+            cmbDepartment.SelectedIndex = 0;
+            cmbDesignation.SelectedIndex = 0;
+            cmbUsers.SelectedIndex= 0;
 
             rMale.Checked = false;
             rFemale.Checked = false;
@@ -947,12 +957,16 @@ namespace RegisterFormWinforms
             }
         }
 
+        
         private void cmbUsers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbUsers.SelectedValue == null || cmbUsers.SelectedValue is DataRowView)
-                return;
+            if (cmbUsers.SelectedIndex == -1) return;
+            if (cmbUsers.SelectedValue == null) return;
+            if (cmbUsers.SelectedValue is DataRowView) return;
 
-            int empId = Convert.ToInt32(cmbUsers.SelectedValue);
+            int empId;
+            if (!int.TryParse(cmbUsers.SelectedValue.ToString(), out empId))
+                return;
 
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -1006,6 +1020,7 @@ namespace RegisterFormWinforms
                     btnDelete.Enabled = true;
                     btnSave.Enabled = false;
                 }
+
                 dr.Close();
             }
         }
@@ -1019,6 +1034,7 @@ namespace RegisterFormWinforms
         {
             LoadEmployeeNames();
         }
+
 
         private void txtPhone_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -1239,7 +1255,7 @@ namespace RegisterFormWinforms
         {
             if (e.KeyCode == Keys.Enter)
 
-                rOther.Focus();
+                cmbBlood.Focus();
         }
 
         private void rOther_KeyDown(object sender, KeyEventArgs e)
@@ -1298,19 +1314,22 @@ namespace RegisterFormWinforms
             sf.Show();
         }
 
-        private void cmbBlood_Enter(object sender, EventArgs e)
-        {
-            cmbBlood.DroppedDown = true;
-        }
+       
 
         private void cmbDepartment_Enter(object sender, EventArgs e)
         {
-            cmbDepartment.DroppedDown = true;
+            this.BeginInvoke(new Action(() =>
+            {
+                cmbDepartment.DroppedDown = true;
+            }));
         }
 
         private void cmbDesignation_Enter(object sender, EventArgs e)
         {
-            cmbDesignation.DroppedDown = true;
+            this.BeginInvoke(new Action(() =>
+            {
+                cmbDesignation.DroppedDown = true;
+            }));
         }
     
         private void btnRemoveImage_Click(object sender, EventArgs e)
@@ -1516,5 +1535,22 @@ namespace RegisterFormWinforms
 
             return promptForm.ShowDialog() == DialogResult.OK ? textBox.Text : "";
         }
+
+        private void cmbUsers_Enter(object sender, EventArgs e)
+        {
+            LoadEmployeeNames();
+            cmbUsers.DroppedDown = true;
+        }
+
+       
+
+        private void cmbBlood_Enter(object sender, EventArgs e)
+        {
+            this.BeginInvoke(new Action(() =>
+            {
+                cmbBlood.DroppedDown = true;
+            }));
+        }
+
     }
 }
