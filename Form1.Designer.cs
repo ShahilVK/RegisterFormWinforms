@@ -83,6 +83,7 @@ namespace RegisterFormWinforms
             this.btnSearch = new System.Windows.Forms.Button();
             this.cmbUsers = new System.Windows.Forms.ComboBox();
             this.rOther = new System.Windows.Forms.RadioButton();
+            this.btnRemoveImage = new System.Windows.Forms.Button();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -555,6 +556,8 @@ namespace RegisterFormWinforms
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.btnClear.Enter += new System.EventHandler(this.btnClear_Enter);
+            this.btnClear.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnClear_MouseDown);
             // 
             // btnNext
             // 
@@ -651,24 +654,6 @@ namespace RegisterFormWinforms
             this.btnBrowse.Text = "Browse Photo";
             this.btnBrowse.UseVisualStyleBackColor = false;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-
-            // btnRemoveImage
-            this.btnRemoveImage = new System.Windows.Forms.Button();
-            this.btnRemoveImage.BackColor = System.Drawing.Color.FromArgb(239, 68, 68);
-            this.btnRemoveImage.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnRemoveImage.FlatAppearance.BorderSize = 0;
-            this.btnRemoveImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRemoveImage.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            this.btnRemoveImage.ForeColor = System.Drawing.Color.White;
-            this.btnRemoveImage.Location = new System.Drawing.Point(1150, 370); // below browse button
-            this.btnRemoveImage.Name = "btnRemoveImage";
-            this.btnRemoveImage.Size = new System.Drawing.Size(200, 35);
-            this.btnRemoveImage.TabIndex = 50;
-            this.btnRemoveImage.Text = "Remove Photo";
-            this.btnRemoveImage.UseVisualStyleBackColor = false;
-            this.btnRemoveImage.Click += new System.EventHandler(this.btnRemoveImage_Click);
-
-            this.Controls.Add(this.btnRemoveImage);
             // 
             // openFileDialog1
             // 
@@ -727,6 +712,22 @@ namespace RegisterFormWinforms
             this.rOther.UseVisualStyleBackColor = true;
             this.rOther.KeyDown += new System.Windows.Forms.KeyEventHandler(this.rOther_KeyDown);
             // 
+            // btnRemoveImage
+            // 
+            this.btnRemoveImage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(68)))), ((int)(((byte)(68)))));
+            this.btnRemoveImage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRemoveImage.FlatAppearance.BorderSize = 0;
+            this.btnRemoveImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRemoveImage.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
+            this.btnRemoveImage.ForeColor = System.Drawing.Color.White;
+            this.btnRemoveImage.Location = new System.Drawing.Point(1150, 370);
+            this.btnRemoveImage.Name = "btnRemoveImage";
+            this.btnRemoveImage.Size = new System.Drawing.Size(200, 35);
+            this.btnRemoveImage.TabIndex = 50;
+            this.btnRemoveImage.Text = "Remove Photo";
+            this.btnRemoveImage.UseVisualStyleBackColor = false;
+            this.btnRemoveImage.Click += new System.EventHandler(this.btnRemoveImage_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
@@ -734,6 +735,7 @@ namespace RegisterFormWinforms
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1420, 870);
+            this.Controls.Add(this.btnRemoveImage);
             this.Controls.Add(this.panelHeader);
             this.Controls.Add(this.rOther);
             this.Controls.Add(this.cmbUsers);

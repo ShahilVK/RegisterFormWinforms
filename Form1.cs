@@ -28,16 +28,11 @@ namespace RegisterFormWinforms
             cmbDesignation.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbUsers.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            txtName.Leave += txtName_Leave;
-            txtAge.Leave += txtAge_Leave;
-            txtPhone.Leave += txtPhone_Leave;
-            txtEmail.Leave += txtEmail_Leave;
-            txtSalary.Leave += txtSalary_Leave;
+            
 
             ApplyPremiumUI();
         }
 
-        //private bool isClearing = false;
 
         private void ApplyPremiumUI()
         {
@@ -146,6 +141,37 @@ namespace RegisterFormWinforms
         }
 
 
+        private bool ValidateName()
+        {
+            if (isClearing) return true; 
+
+            string name = txtName.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("Name required");
+                txtName.Focus();
+                return false;
+            }
+
+            if (name.Length < 3)
+            {
+                MessageBox.Show("Name minimum 3 characters");
+                txtName.Focus();
+                return false;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(name, @"^[a-zA-Z\s]+$"))
+            {
+                MessageBox.Show("Only letters allowed");
+                txtName.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+
 
         void LoadEmployeeNames()
         {
@@ -241,86 +267,86 @@ namespace RegisterFormWinforms
             }
         }
 
-        private void txtName_Leave(object sender, EventArgs e)
+        private bool ValidateAge()
         {
-            if (isClearing) return;
-            string name = txtName.Text.Trim();
+            if (isClearing) return true;
 
-            if (name == "")
+            string ageText = txtAge.Text.Trim();
+
+            if (ageText == "")
             {
-                MessageBox.Show("Name required");
-                txtName.Focus();
-                return;
+                MessageBox.Show("Enter age");
+                txtAge.Focus();
+                return false;
             }
 
-            if (name.Length < 3)
+            int age;
+
+            if (!int.TryParse(ageText, out age))
             {
-                MessageBox.Show("Name minimum 3 characters");
-                txtName.Focus();
-                return;
+                MessageBox.Show("Enter valid age");
+                txtAge.Focus();
+                return false;
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(name, @"^[a-zA-Z\s]+$"))
+            if (age < 18 || age > 60)
             {
-                MessageBox.Show("Only letters allowed");
-                txtName.Focus();
+                MessageBox.Show("Age must be between 18 and 60");
+                txtAge.Focus();
+                return false;
             }
+
+            return true;
         }
 
-        private void txtAge_Leave(object sender, EventArgs e)
+        private bool ValidatePhone()
         {
-            if (isClearing) return;
-            if (string.IsNullOrWhiteSpace(txtAge.Text))
-                return;
+            if (isClearing) return true;
 
-            int age = Convert.ToInt32(txtAge.Text);
-
-            //if (age < 18 || age > 60)
-            //{
-            //    MessageBox.Show("Age must be between 18 and 60");
-            //    txtAge.Focus();
-            //}
-        }
-
-        private void txtPhone_Leave(object sender, EventArgs e)
-        {
-            if (isClearing) return;
             string phone = txtPhone.Text.Trim();
 
-            if (phone == "") return;
+            if (phone == "")
+            {
+                MessageBox.Show("Enter phone number");
+                txtPhone.Focus();
+                return false;
+            }
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(phone, @"^\d{10}$"))
             {
                 MessageBox.Show("Invalid phone number");
                 txtPhone.Focus();
+                return false;
             }
+
+            return true;
         }
 
-        private void txtEmail_Leave(object sender, EventArgs e)
+        private bool ValidateEmail()
         {
-            if (isClearing) return;
-            string email = txtEmail.Text.Trim().ToLower();
-            if (email == "") return;
+            if (isClearing) return true;
 
-            if (string.IsNullOrWhiteSpace(email))
+            string email = txtEmail.Text.Trim().ToLower();
+
+            if (email == "")
             {
                 MessageBox.Show("Enter email");
                 txtEmail.Focus();
-                return;
+                return false;
             }
 
             if (email.Contains(" "))
             {
                 MessageBox.Show("Email should not contain spaces");
                 txtEmail.Focus();
-                return;
+                return false;
             }
 
             if (!email.EndsWith("@gmail.com"))
             {
                 MessageBox.Show("Only gmail.com allowed");
                 txtEmail.Focus();
-                return;
+                return false;
             }
 
             bool valid = System.Text.RegularExpressions.Regex.IsMatch(
@@ -332,57 +358,68 @@ namespace RegisterFormWinforms
             {
                 MessageBox.Show("Invalid Gmail format");
                 txtEmail.Focus();
-                return;
+                return false;
             }
 
             if (email.Contains(".."))
             {
                 MessageBox.Show("Invalid email format");
                 txtEmail.Focus();
-                return;
+                return false;
             }
 
             txtEmail.Text = email;
+            return true;
         }
 
-        private void txtSalary_Leave(object sender, EventArgs e)
+        private bool ValidateSalary()
         {
-            if (isClearing) return;
-            if (string.IsNullOrWhiteSpace(txtSalary.Text))
+            if (isClearing) return true;
+
+            string salText = txtSalary.Text.Trim();
+
+            if (salText == "")
             {
                 MessageBox.Show("Salary is required");
                 txtSalary.Focus();
-                return;
+                return false;
             }
 
             decimal sal;
 
-            if (!decimal.TryParse(txtSalary.Text, out sal))
+            if (!decimal.TryParse(salText, out sal))
             {
                 MessageBox.Show("Enter valid salary amount");
                 txtSalary.Focus();
-                return;
+                return false;
             }
 
             if (sal <= 0)
             {
                 MessageBox.Show("Salary must be greater than 0");
                 txtSalary.Focus();
-                return;
+                return false;
             }
 
             if (sal > 200000)
             {
                 MessageBox.Show("Salary too high");
                 txtSalary.Focus();
-                return;
+                return false;
             }
 
             txtSalary.Text = sal.ToString("0.00");
+            return true;
         }
+
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if(!ValidateName()) return;
+            if(!ValidateAge()) return;
+            if(!ValidatePhone()) return;
+            if(!ValidateEmail()) return;
+            if(!ValidateSalary()) return;
 
             DialogResult result = MessageBox.Show(
         "Do you want to save this employee?",
@@ -398,7 +435,15 @@ namespace RegisterFormWinforms
 
                 try
                 {
-                    string gender = rMale.Checked ? "Male" : "Female";
+                    //string gender = rMale.Checked ? "Male" : "Female";
+                    string gender = "";
+
+                    if (rMale.Checked)
+                        gender = "Male";
+                    else if (rFemale.Checked)
+                        gender = "Female";
+                    else if (rOther.Checked)
+                        gender = "Other";
                     bool active = chkActive.Checked;
                     byte[] imgBytes = null;
 
@@ -643,6 +688,7 @@ namespace RegisterFormWinforms
 
             btnUpdate.Enabled = false;
             btnDelete.Enabled = false;
+            btnSave.Enabled = true;
             isClearing = false;
         }
 
@@ -696,7 +742,7 @@ namespace RegisterFormWinforms
             else
             chkActive.Checked = false;
 
-            if (row.Cells["Photo"].Value != DBNull.Value && row.Cells["photo"].Value !=null)
+            if (row.Cells["Photo"].Value != DBNull.Value && row.Cells["Photo"].Value !=null)
             {
                 byte[] img = (byte[])row.Cells["Photo"].Value;
                 MemoryStream ms = new MemoryStream(img);
@@ -886,18 +932,71 @@ namespace RegisterFormWinforms
             }
         }
 
+   
+
         private void txtName_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                txtAge.Focus();
+                string name = txtName.Text.Trim();
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    MessageBox.Show("Name required");
+                    txtName.Focus();
+                    return;
+                }
+
+                if (name.Length < 3)
+                {
+                    MessageBox.Show("Name minimum 3 characters");
+                    txtName.Focus();
+                    return;
+                }
+
+                if (!System.Text.RegularExpressions.Regex.IsMatch(name, @"^[a-zA-Z\s]+$"))
+                {
+                    MessageBox.Show("Only letters allowed");
+                    txtName.Focus();
+                    return;
+                }
+
+                txtAge.Focus(); 
             }
         }
-
         private void txtAge_KeyDown(object sender, KeyEventArgs e)
         {
+            if (isClearing) return;
+
             if (e.KeyCode == Keys.Enter)
-                dtDOB.Focus();
+            {
+                string ageText = txtAge.Text.Trim();
+
+                if (ageText == "")
+                {
+                    MessageBox.Show("Enter age");
+                    txtAge.Focus();
+                    return;
+                }
+
+                int age;
+
+                if (!int.TryParse(ageText, out age))
+                {
+                    MessageBox.Show("Enter valid age");
+                    txtAge.Focus();
+                    return;
+                }
+
+                if (age < 18 || age > 60)
+                {
+                    MessageBox.Show("Age must be between 18 and 60");
+                    txtAge.Focus();
+                    return;
+                }
+
+                dtDOB.Focus(); 
+            }
         }
 
         private void txtEntryNo_KeyDown(object sender, KeyEventArgs e)
@@ -924,12 +1023,59 @@ namespace RegisterFormWinforms
                 txtPhone.Focus();
         }
 
+        
+
         private void txtEmail_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtQualification.Focus();
-        }
+            {
+                string email = txtEmail.Text.Trim().ToLower();
 
+                if (email == "")
+                {
+                    MessageBox.Show("Enter email");
+                    txtEmail.Focus();
+                    return;
+                }
+
+                if (email.Contains(" "))
+                {
+                    MessageBox.Show("Email should not contain spaces");
+                    txtEmail.Focus();
+                    return;
+                }
+
+                if (!email.EndsWith("@gmail.com"))
+                {
+                    MessageBox.Show("Only gmail.com allowed");
+                    txtEmail.Focus();
+                    return;
+                }
+
+                bool valid = System.Text.RegularExpressions.Regex.IsMatch(
+                    email,
+                    @"^[a-zA-Z0-9._%+-]+@gmail\.com$"
+                );
+
+                if (!valid)
+                {
+                    MessageBox.Show("Invalid Gmail format");
+                    txtEmail.Focus();
+                    return;
+                }
+
+                if (email.Contains(".."))
+                {
+                    MessageBox.Show("Invalid email format");
+                    txtEmail.Focus();
+                    return;
+                }
+
+                txtEmail.Text = email;
+
+                txtQualification.Focus(); // move next field
+            }
+        }
         private void txtQualification_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -939,9 +1085,26 @@ namespace RegisterFormWinforms
         private void txtPhone_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtEmail.Focus();
-        }
+            {
+                string phone = txtPhone.Text.Trim();
 
+                if (phone == "")
+                {
+                    MessageBox.Show("Enter phone number");
+                    txtPhone.Focus();
+                    return;
+                }
+
+                if (!System.Text.RegularExpressions.Regex.IsMatch(phone, @"^\d{10}$"))
+                {
+                    MessageBox.Show("Invalid phone number");
+                    txtPhone.Focus();
+                    return;
+                }
+
+                txtEmail.Focus();   // move next field
+            }
+        }
         private void cmbDepartment_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -972,19 +1135,52 @@ namespace RegisterFormWinforms
                 cmbBlood.Focus();
         }
 
+       
         private void txtSalary_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                txtAddress.Focus();
+            {
+                string salText = txtSalary.Text.Trim();
+
+                if (salText == "")
+                {
+                    MessageBox.Show("Salary is required");
+                    txtSalary.Focus();
+                    return;
+                }
+
+                decimal sal;
+
+                if (!decimal.TryParse(salText, out sal))
+                {
+                    MessageBox.Show("Enter valid salary amount");
+                    txtSalary.Focus();
+                    return;
+                }
+
+                if (sal <= 0)
+                {
+                    MessageBox.Show("Salary must be greater than 0");
+                    txtSalary.Focus();
+                    return;
+                }
+
+                if (sal > 200000)
+                {
+                    MessageBox.Show("Salary too high");
+                    txtSalary.Focus();
+                    return;
+                }
+
+                txtSalary.Text = sal.ToString("0.00");
+
+                txtAddress.Focus(); // next focus
+            }
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            //if (txtName.Text == "")
-            //{
-            //    MessageBox.Show("Select employee first");
-            //    return;
-            //}
+           
 
             SalaryForm sf = new SalaryForm(
                 txtEntryNo.Text,
@@ -1030,6 +1226,16 @@ namespace RegisterFormWinforms
                 imagePath = "";
                 MessageBox.Show("Image removed");
             }
+        }
+
+        private void btnClear_MouseDown(object sender, MouseEventArgs e)
+        {
+            isClearing = true;
+        }
+
+        private void btnClear_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }
