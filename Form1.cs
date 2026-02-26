@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
 using System.Xml.Linq;
 
 namespace RegisterFormWinforms
@@ -132,6 +133,10 @@ namespace RegisterFormWinforms
             btnDelete.Enabled = false;
 
             dataGridView1.DataBindingComplete += dataGridView1_DataBindingComplete;
+            this.BeginInvoke(new Action(() =>
+            {
+                txtName.Focus();
+            }));
 
         }
 
@@ -202,10 +207,13 @@ namespace RegisterFormWinforms
                 {
                     con.Open();
 
-                    string query = "SELECT * FROM Employees";
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    SqlCommand cmd = new SqlCommand("sp_GetAllEmployees", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
+
                     dataGridView1.DataSource = dt;
 
                     SetRowColors();
@@ -225,9 +233,8 @@ namespace RegisterFormWinforms
                 {
                     con.Open();
 
-                    string query = "SELECT ISNULL(MAX(CAST(EntryNo AS INT)),0) + 1 FROM Employees";
-
-                    SqlCommand cmd = new SqlCommand(query, con);
+                    SqlCommand cmd = new SqlCommand("sp_GenerateEntryNo", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
                     object result = cmd.ExecuteScalar();
 
@@ -289,12 +296,12 @@ namespace RegisterFormWinforms
                 return false;
             }
 
-            if (age < 18 || age > 60)
-            {
-                MessageBox.Show("Age must be between 18 and 60");
-                txtAge.Focus();
-                return false;
-            }
+            //if (age < 18 || age > 60)
+            //{
+            //    MessageBox.Show("Age must be between 18 and 60");
+            //    txtAge.Focus();
+            //    return false;
+            //}
 
             return true;
         }
@@ -401,25 +408,124 @@ namespace RegisterFormWinforms
                 return false;
             }
 
-            if (sal > 200000)
-            {
-                MessageBox.Show("Salary too high");
-                txtSalary.Focus();
-                return false;
-            }
+            //if (sal > 200000)
+            //{
+            //    MessageBox.Show("Salary too high");
+            //    txtSalary.Focus();
+            //    return false;
+            //}
 
             txtSalary.Text = sal.ToString("0.00");
             return true;
         }
 
+        private bool ValidateAll()
+        {
+            if (isClearing) return true;
+
+            if (!ValidateName()) return false;
+            if (!ValidateAge()) return false;
+            if (!ValidatePhone()) return false;
+            if (!ValidateEmail()) return false;
+            if (!ValidateSalary()) return false;
+
+            if (!rMale.Checked && !rFemale.Checked && !rOther.Checked)
+            {
+                MessageBox.Show("Select gender");
+                rMale.Focus();
+                return false;
+            }
+
+            if (cmbBlood.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select blood group");
+                cmbBlood.Focus();
+                return false;
+            }
+
+            if (cmbDepartment.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select department");
+                cmbDepartment.Focus();
+                return false;
+            }
+
+            if (cmbDesignation.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select designation");
+                cmbDesignation.Focus();
+                return false;
+            }
+
+            if (txtAddress.Text.Trim() == "")
+            {
+                MessageBox.Show("Enter address");
+                txtAddress.Focus();
+                return false;
+            }
+
+            if (txtQualification.Text.Trim() == "")
+            {
+                MessageBox.Show("Enter qualification");
+                txtQualification.Focus();
+                return false;
+            }
+
+            if (IsPhoneExists())
+            {
+                MessageBox.Show("Phone already exists");
+                txtPhone.Focus();
+                return false;
+            }
+
+            if (IsEmailExists())
+            {
+                MessageBox.Show("Email already exists");
+                txtEmail.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsPhoneExists()
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand("sp_CheckPhoneExists", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@Phone", txtPhone.Text.Trim());
+                cmd.Parameters.AddWithValue("@Id", selectedId);
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
+            }
+        }
+
+        private bool IsEmailExists()
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand("sp_CheckEmailExists", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@Email", txtEmail.Text.Trim());
+                cmd.Parameters.AddWithValue("@Id", selectedId);
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
+            }
+        }
+
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if(!ValidateName()) return;
-            if(!ValidateAge()) return;
-            if(!ValidatePhone()) return;
-            if(!ValidateEmail()) return;
-            if(!ValidateSalary()) return;
+                if (!ValidateAll()) return;
 
             DialogResult result = MessageBox.Show(
         "Do you want to save this employee?",
@@ -435,7 +541,7 @@ namespace RegisterFormWinforms
 
                 try
                 {
-                    //string gender = rMale.Checked ? "Male" : "Female";
+                   
                     string gender = "";
 
                     if (rMale.Checked)
@@ -486,6 +592,8 @@ namespace RegisterFormWinforms
                     GenerateEntryNo();
                     SetRowColors();
 
+
+                    btnClear.PerformClick();
 
                     btnUpdate.Enabled = true;   
                     btnDelete.Enabled = true;
@@ -566,12 +674,18 @@ namespace RegisterFormWinforms
                     int result = cmd.ExecuteNonQuery();
 
                     if (result > 0)
+                    {
                         MessageBox.Show("Updated Successfully ✅");
-                    else
-                        MessageBox.Show("Update Failed");
 
-                    LoadGrid();
-                    SetRowColors();
+                        LoadGrid();
+                        SetRowColors();
+
+                        btnClear.PerformClick();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Update Failed");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -731,6 +845,8 @@ namespace RegisterFormWinforms
                 rMale.Checked = true;
             else if (gender == "Female")
                 rFemale.Checked = true;
+            else if(gender == "Other")
+                rOther.Checked = true;
             else
             {
                 rMale.Checked = false;
@@ -841,8 +957,9 @@ namespace RegisterFormWinforms
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 con.Open();
-                string query = "SELECT * FROM Employees WHERE Id=@Id";
-                SqlCommand cmd = new SqlCommand(query, con);
+
+                SqlCommand cmd = new SqlCommand("sp_GetEmployeeById", con);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Id", empId);
 
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -867,10 +984,10 @@ namespace RegisterFormWinforms
                     dtEntryDate.Value = Convert.ToDateTime(dr["EntryDate"]);
                     dtDOB.Value = Convert.ToDateTime(dr["DOB"]);
 
-                    if (dr["Gender"].ToString() == "Male")
-                        rMale.Checked = true;
-                    else
-                        rFemale.Checked = true;
+                    string gender = dr["Gender"].ToString();
+                    rMale.Checked = gender == "Male";
+                    rFemale.Checked = gender == "Female";
+                    rOther.Checked = gender == "Other";
 
                     chkActive.Checked = Convert.ToBoolean(dr["IsActive"]);
 
@@ -988,12 +1105,7 @@ namespace RegisterFormWinforms
                     return;
                 }
 
-                if (age < 18 || age > 60)
-                {
-                    MessageBox.Show("Age must be between 18 and 60");
-                    txtAge.Focus();
-                    return;
-                }
+                
 
                 dtDOB.Focus(); 
             }
@@ -1073,7 +1185,7 @@ namespace RegisterFormWinforms
 
                 txtEmail.Text = email;
 
-                txtQualification.Focus(); // move next field
+                txtQualification.Focus(); 
             }
         }
         private void txtQualification_KeyDown(object sender, KeyEventArgs e)
@@ -1102,7 +1214,7 @@ namespace RegisterFormWinforms
                     return;
                 }
 
-                txtEmail.Focus();   // move next field
+                txtEmail.Focus();   
             }
         }
         private void cmbDepartment_KeyDown(object sender, KeyEventArgs e)
@@ -1126,7 +1238,8 @@ namespace RegisterFormWinforms
         private void rFemale_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                cmbBlood.Focus();
+
+                rOther.Focus();
         }
 
         private void rOther_KeyDown(object sender, KeyEventArgs e)
@@ -1165,16 +1278,10 @@ namespace RegisterFormWinforms
                     return;
                 }
 
-                if (sal > 200000)
-                {
-                    MessageBox.Show("Salary too high");
-                    txtSalary.Focus();
-                    return;
-                }
 
                 txtSalary.Text = sal.ToString("0.00");
 
-                txtAddress.Focus(); // next focus
+                txtAddress.Focus(); 
             }
         }
 
@@ -1233,9 +1340,181 @@ namespace RegisterFormWinforms
             isClearing = true;
         }
 
-        private void btnClear_Enter(object sender, EventArgs e)
-        {
 
+        private void btnBrowse_Enter(object sender, EventArgs e)
+        {
+            OpenFileDialog op = new OpenFileDialog();
+            op.Filter = "Image Files|*.jpg;*.png;*.jpeg";
+
+            if (op.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox1.Image = Image.FromFile(op.FileName);
+                imagePath = op.FileName;
+
+                btnSave.Focus();
+            }
+        }
+
+        private void btnFind_Click(object sender, EventArgs e)
+        {
+            string entryNo = ShowInputDialog("Find Employee", "Enter Entry Number");
+
+            if (string.IsNullOrWhiteSpace(entryNo))
+                return;
+
+            LoadEmployeeByEntryNo(entryNo);
+        }
+
+        private void LoadEmployeeByEntryNo(string entryNo)
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                con.Open();
+
+                SqlCommand cmd = new SqlCommand("sp_GetEmployeeByEntryNo", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@EntryNo", entryNo);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    selectedId = Convert.ToInt32(dr["Id"]);
+
+                    txtEntryNo.Text = dr["EntryNo"].ToString();
+                    txtName.Text = dr["Name"].ToString();
+                    txtAge.Text = dr["Age"].ToString();
+                    txtAddress.Text = dr["Address"].ToString();
+                    txtPhone.Text = dr["Phone"].ToString();
+                    txtQualification.Text = dr["Qualification"].ToString();
+                    txtSalary.Text = dr["Salary"].ToString();
+                    txtEmail.Text = dr["Email"].ToString();
+
+                    cmbBlood.Text = dr["BloodGroup"].ToString();
+                    cmbDepartment.Text = dr["Department"].ToString();
+                    cmbDesignation.Text = dr["Designation"].ToString();
+
+                    dtEntryDate.Value = Convert.ToDateTime(dr["EntryDate"]);
+                    dtDOB.Value = Convert.ToDateTime(dr["DOB"]);
+
+                    string gender = dr["Gender"].ToString();
+                    rMale.Checked = gender == "Male";
+                    rFemale.Checked = gender == "Female";
+                    rOther.Checked = gender == "Other";
+
+                    chkActive.Checked = Convert.ToBoolean(dr["IsActive"]);
+
+                    if (dr["Photo"] != DBNull.Value)
+                    {
+                        byte[] img = (byte[])dr["Photo"];
+                        MemoryStream ms = new MemoryStream(img);
+                        pictureBox1.Image = Image.FromStream(ms);
+                    }
+                    else
+                    {
+                        pictureBox1.Image = null;
+                    }
+
+                    btnUpdate.Enabled = true;
+                    btnDelete.Enabled = true;
+                    btnSave.Enabled = false;
+                }
+                else
+                {
+                    MessageBox.Show("Entry not found");
+                }
+
+                dr.Close();
+            }
+        }
+
+
+
+        private string ShowInputDialog(string title, string prompt)
+        {
+            Form promptForm = new Form()
+            {
+                Width = 360,
+                Height = 190, 
+                Text = title,
+                StartPosition = FormStartPosition.CenterScreen,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                BackColor = System.Drawing.Color.FromArgb(248, 250, 252), 
+                Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))),
+                ForeColor = System.Drawing.Color.FromArgb(15, 23, 42)
+            };
+
+            Label textLabel = new Label()
+            {
+                Left = 20,
+                Top = 20,
+                Text = prompt,
+                Width = 300,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold),
+                ForeColor = System.Drawing.Color.FromArgb(71, 85, 105)
+            };
+
+            TextBox textBox = new TextBox()
+            {
+                Left = 20,
+                Top = 50,
+                Width = 300,
+                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = System.Drawing.Color.White,
+                ForeColor = System.Drawing.Color.FromArgb(15, 23, 42)
+            };
+
+            textBox.Enter += (s, e) => textBox.BackColor = System.Drawing.Color.FromArgb(241, 245, 249);
+            textBox.Leave += (s, e) => textBox.BackColor = System.Drawing.Color.White;
+
+            Button confirmation = new Button()
+            {
+                Text = "OK",
+                Left = 60,
+                Width = 100,
+                Height = 35,
+                Top = 95,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.FromArgb(59, 130, 246),
+                ForeColor = System.Drawing.Color.White,
+                Cursor = Cursors.Hand,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold)
+            };
+            confirmation.FlatAppearance.BorderSize = 0;
+            confirmation.MouseEnter += (s, e) => confirmation.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            confirmation.MouseLeave += (s, e) => confirmation.BackColor = System.Drawing.Color.FromArgb(59, 130, 246);
+
+            Button cancel = new Button()
+            {
+                Text = "Cancel",
+                Left = 180,
+                Width = 100,
+                Height = 35,
+                Top = 95,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.FromArgb(100, 116, 139),
+                ForeColor = System.Drawing.Color.White,
+                Cursor = Cursors.Hand,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold)
+            };
+            cancel.FlatAppearance.BorderSize = 0;
+            cancel.MouseEnter += (s, e) => cancel.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            cancel.MouseLeave += (s, e) => cancel.BackColor = System.Drawing.Color.FromArgb(100, 116, 139);
+
+            confirmation.DialogResult = DialogResult.OK;
+            cancel.DialogResult = DialogResult.Cancel;
+
+            promptForm.Controls.Add(textLabel);
+            promptForm.Controls.Add(textBox);
+            promptForm.Controls.Add(confirmation);
+            promptForm.Controls.Add(cancel);
+
+            promptForm.AcceptButton = confirmation;
+            promptForm.CancelButton = cancel;
+
+            return promptForm.ShowDialog() == DialogResult.OK ? textBox.Text : "";
         }
     }
 }

@@ -33,9 +33,9 @@ namespace RegisterFormWinforms
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelHeader = new System.Windows.Forms.Panel();
             this.label16 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -84,9 +84,12 @@ namespace RegisterFormWinforms
             this.cmbUsers = new System.Windows.Forms.ComboBox();
             this.rOther = new System.Windows.Forms.RadioButton();
             this.btnRemoveImage = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnFind = new System.Windows.Forms.Button();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelHeader
@@ -330,7 +333,7 @@ namespace RegisterFormWinforms
             // 
             this.rMale.AutoSize = true;
             this.rMale.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.rMale.Location = new System.Drawing.Point(150, 233);
+            this.rMale.Location = new System.Drawing.Point(3, 11);
             this.rMale.Name = "rMale";
             this.rMale.Size = new System.Drawing.Size(68, 27);
             this.rMale.TabIndex = 19;
@@ -343,7 +346,7 @@ namespace RegisterFormWinforms
             // 
             this.rFemale.AutoSize = true;
             this.rFemale.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.rFemale.Location = new System.Drawing.Point(225, 233);
+            this.rFemale.Location = new System.Drawing.Point(68, 11);
             this.rFemale.Name = "rFemale";
             this.rFemale.Size = new System.Drawing.Size(85, 27);
             this.rFemale.TabIndex = 20;
@@ -556,7 +559,7 @@ namespace RegisterFormWinforms
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            this.btnClear.Enter += new System.EventHandler(this.btnClear_Enter);
+            //this.btnClear.Enter += new System.EventHandler(this.btnClear_Enter);
             this.btnClear.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnClear_MouseDown);
             // 
             // btnNext
@@ -577,29 +580,29 @@ namespace RegisterFormWinforms
             // 
             // dataGridView1
             // 
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
-            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
             this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridView1.ColumnHeadersHeight = 40;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(130)))), ((int)(((byte)(246)))));
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(130)))), ((int)(((byte)(246)))));
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridView1.EnableHeadersVisualStyles = false;
             this.dataGridView1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
             this.dataGridView1.Location = new System.Drawing.Point(40, 540);
@@ -654,6 +657,7 @@ namespace RegisterFormWinforms
             this.btnBrowse.Text = "Browse Photo";
             this.btnBrowse.UseVisualStyleBackColor = false;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            this.btnBrowse.Enter += new System.EventHandler(this.btnBrowse_Enter);
             // 
             // openFileDialog1
             // 
@@ -688,22 +692,16 @@ namespace RegisterFormWinforms
             // 
             // cmbUsers
             // 
-            this.cmbUsers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbUsers.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cmbUsers.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cmbUsers.FormattingEnabled = true;
-            this.cmbUsers.Location = new System.Drawing.Point(740, 482);
+            this.cmbUsers.Location = new System.Drawing.Point(0, 0);
             this.cmbUsers.Name = "cmbUsers";
-            this.cmbUsers.Size = new System.Drawing.Size(160, 31);
-            this.cmbUsers.TabIndex = 45;
-            this.cmbUsers.DropDown += new System.EventHandler(this.cmbUsers_DropDown);
-            this.cmbUsers.SelectedIndexChanged += new System.EventHandler(this.cmbUsers_SelectedIndexChanged);
+            this.cmbUsers.Size = new System.Drawing.Size(121, 31);
+            this.cmbUsers.TabIndex = 51;
             // 
             // rOther
             // 
             this.rOther.AutoSize = true;
             this.rOther.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.rOther.Location = new System.Drawing.Point(315, 233);
+            this.rOther.Location = new System.Drawing.Point(149, 11);
             this.rOther.Name = "rOther";
             this.rOther.Size = new System.Drawing.Size(75, 27);
             this.rOther.TabIndex = 47;
@@ -728,6 +726,30 @@ namespace RegisterFormWinforms
             this.btnRemoveImage.UseVisualStyleBackColor = false;
             this.btnRemoveImage.Click += new System.EventHandler(this.btnRemoveImage_Click);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.rMale);
+            this.panel1.Controls.Add(this.rFemale);
+            this.panel1.Controls.Add(this.rOther);
+            this.panel1.Location = new System.Drawing.Point(141, 222);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(224, 41);
+            this.panel1.TabIndex = 47;
+            // 
+            // btnFind
+            // 
+            this.btnFind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.btnFind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnFind.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFind.ForeColor = System.Drawing.Color.White;
+            this.btnFind.Location = new System.Drawing.Point(736, 478);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(110, 38);
+            this.btnFind.TabIndex = 52;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = false;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
@@ -735,9 +757,10 @@ namespace RegisterFormWinforms
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1420, 870);
+            this.Controls.Add(this.btnFind);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnRemoveImage);
             this.Controls.Add(this.panelHeader);
-            this.Controls.Add(this.rOther);
             this.Controls.Add(this.cmbUsers);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtSearch);
@@ -760,8 +783,6 @@ namespace RegisterFormWinforms
             this.Controls.Add(this.label12);
             this.Controls.Add(this.txtQualification);
             this.Controls.Add(this.cmbBlood);
-            this.Controls.Add(this.rFemale);
-            this.Controls.Add(this.rMale);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
@@ -791,6 +812,8 @@ namespace RegisterFormWinforms
             this.panelHeader.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -846,5 +869,7 @@ namespace RegisterFormWinforms
         private System.Windows.Forms.ComboBox cmbUsers;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.RadioButton rOther;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnFind;
     }
 }
