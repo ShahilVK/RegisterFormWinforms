@@ -34,6 +34,14 @@ namespace RegisterFormWinforms
         /// </summary>
         private void InitializeComponent()
         {
+            this.panelFetchSalary = new System.Windows.Forms.Panel();
+            this.label17 = new System.Windows.Forms.Label();
+            this.txtSearchEntryNo = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.cmbSearchMonths = new System.Windows.Forms.ComboBox();
+            this.btnGetSalary = new System.Windows.Forms.Button();
+            this.label19 = new System.Windows.Forms.Label();
+            this.txtShowTotalSalary = new System.Windows.Forms.TextBox();
             this.panelHeader = new System.Windows.Forms.Panel();
             this.labelHeader = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -72,15 +80,123 @@ namespace RegisterFormWinforms
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.txtSearchEntryNo = new System.Windows.Forms.TextBox();
-            this.cmbSearchMonths = new System.Windows.Forms.ComboBox();
-            this.btnGetSalary = new System.Windows.Forms.Button();
-            this.label19 = new System.Windows.Forms.Label();
-            this.txtShowTotalSalary = new System.Windows.Forms.TextBox();
+            this.btnSearchIcon = new System.Windows.Forms.Button();
+            this.panelFetchSalary.SuspendLayout();
             this.panelHeader.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // panelFetchSalary
+            // 
+            this.panelFetchSalary.BackColor = System.Drawing.Color.White;
+            this.panelFetchSalary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelFetchSalary.Controls.Add(this.label17);
+            this.panelFetchSalary.Controls.Add(this.txtSearchEntryNo);
+            this.panelFetchSalary.Controls.Add(this.label18);
+            this.panelFetchSalary.Controls.Add(this.cmbSearchMonths);
+            this.panelFetchSalary.Controls.Add(this.btnGetSalary);
+            this.panelFetchSalary.Controls.Add(this.label19);
+            this.panelFetchSalary.Controls.Add(this.txtShowTotalSalary);
+            this.panelFetchSalary.Location = new System.Drawing.Point(50, 520);
+            this.panelFetchSalary.Name = "panelFetchSalary";
+            this.panelFetchSalary.Size = new System.Drawing.Size(370, 115);
+            this.panelFetchSalary.TabIndex = 50;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
+            this.label17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
+            this.label17.Location = new System.Drawing.Point(15, 20);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(66, 21);
+            this.label17.TabIndex = 41;
+            this.label17.Text = "Emp ID:";
+            // 
+            // txtSearchEntryNo
+            // 
+            this.txtSearchEntryNo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearchEntryNo.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtSearchEntryNo.Location = new System.Drawing.Point(85, 17);
+            this.txtSearchEntryNo.Name = "txtSearchEntryNo";
+            this.txtSearchEntryNo.Size = new System.Drawing.Size(80, 30);
+            this.txtSearchEntryNo.TabIndex = 43;
+            this.txtSearchEntryNo.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchEntryNo_KeyDown);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
+            this.label18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
+            this.label18.Location = new System.Drawing.Point(175, 20);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(63, 21);
+            this.label18.TabIndex = 42;
+            this.label18.Text = "Month:";
+            // 
+            // cmbSearchMonths
+            // 
+            this.cmbSearchMonths.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSearchMonths.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cmbSearchMonths.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbSearchMonths.FormattingEnabled = true;
+            this.cmbSearchMonths.Items.AddRange(new object[] {
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"});
+            this.cmbSearchMonths.Location = new System.Drawing.Point(240, 17);
+            this.cmbSearchMonths.Name = "cmbSearchMonths";
+            this.cmbSearchMonths.Size = new System.Drawing.Size(110, 31);
+            this.cmbSearchMonths.TabIndex = 44;
+            this.cmbSearchMonths.Enter += new System.EventHandler(this.cmbSearchMonths_Enter);
+            this.cmbSearchMonths.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmbSearchMonths_KeyDown);
+            // 
+            // btnGetSalary
+            // 
+            this.btnGetSalary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.btnGetSalary.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnGetSalary.FlatAppearance.BorderSize = 0;
+            this.btnGetSalary.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnGetSalary.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.btnGetSalary.ForeColor = System.Drawing.Color.White;
+            this.btnGetSalary.Location = new System.Drawing.Point(15, 68);
+            this.btnGetSalary.Name = "btnGetSalary";
+            this.btnGetSalary.Size = new System.Drawing.Size(100, 32);
+            this.btnGetSalary.TabIndex = 45;
+            this.btnGetSalary.Text = "Get Salary";
+            this.btnGetSalary.UseVisualStyleBackColor = false;
+            this.btnGetSalary.Click += new System.EventHandler(this.btnGetSalary_Click);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
+            this.label19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
+            this.label19.Location = new System.Drawing.Point(135, 73);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(73, 21);
+            this.label19.TabIndex = 46;
+            this.label19.Text = "Fetched:";
+            // 
+            // txtShowTotalSalary
+            // 
+            this.txtShowTotalSalary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.txtShowTotalSalary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtShowTotalSalary.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.txtShowTotalSalary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(185)))), ((int)(((byte)(129)))));
+            this.txtShowTotalSalary.Location = new System.Drawing.Point(215, 69);
+            this.txtShowTotalSalary.Name = "txtShowTotalSalary";
+            this.txtShowTotalSalary.ReadOnly = true;
+            this.txtShowTotalSalary.Size = new System.Drawing.Size(135, 30);
+            this.txtShowTotalSalary.TabIndex = 47;
             // 
             // panelHeader
             // 
@@ -502,102 +618,16 @@ namespace RegisterFormWinforms
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
-            // label17
+            // btnSearchIcon
             // 
-            this.label17.AutoSize = true;
-            this.label17.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
-            this.label17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
-            this.label17.Location = new System.Drawing.Point(50, 535);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(66, 21);
-            this.label17.TabIndex = 41;
-            this.label17.Text = "Emp ID:";
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
-            this.label18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
-            this.label18.Location = new System.Drawing.Point(210, 535);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(63, 21);
-            this.label18.TabIndex = 42;
-            this.label18.Text = "Month:";
-            // 
-            // txtSearchEntryNo
-            // 
-            this.txtSearchEntryNo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSearchEntryNo.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtSearchEntryNo.Location = new System.Drawing.Point(120, 532);
-            this.txtSearchEntryNo.Name = "txtSearchEntryNo";
-            this.txtSearchEntryNo.Size = new System.Drawing.Size(80, 30);
-            this.txtSearchEntryNo.TabIndex = 43;
-            this.txtSearchEntryNo.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchEntryNo_KeyDown);
-            // 
-            // cmbSearchMonths
-            // 
-            this.cmbSearchMonths.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSearchMonths.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cmbSearchMonths.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.cmbSearchMonths.FormattingEnabled = true;
-            this.cmbSearchMonths.Items.AddRange(new object[] {
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"});
-            this.cmbSearchMonths.Location = new System.Drawing.Point(275, 532);
-            this.cmbSearchMonths.Name = "cmbSearchMonths";
-            this.cmbSearchMonths.Size = new System.Drawing.Size(95, 31);
-            this.cmbSearchMonths.TabIndex = 44;
-            this.cmbSearchMonths.Enter += new System.EventHandler(this.cmbSearchMonths_Enter);
-            this.cmbSearchMonths.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmbSearchMonths_KeyDown);
-            // 
-            // btnGetSalary
-            // 
-            this.btnGetSalary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
-            this.btnGetSalary.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnGetSalary.FlatAppearance.BorderSize = 0;
-            this.btnGetSalary.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnGetSalary.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
-            this.btnGetSalary.ForeColor = System.Drawing.Color.White;
-            this.btnGetSalary.Location = new System.Drawing.Point(50, 592);
-            this.btnGetSalary.Name = "btnGetSalary";
-            this.btnGetSalary.Size = new System.Drawing.Size(100, 30);
-            this.btnGetSalary.TabIndex = 45;
-            this.btnGetSalary.Text = "Get Salary";
-            this.btnGetSalary.UseVisualStyleBackColor = false;
-            this.btnGetSalary.Click += new System.EventHandler(this.btnGetSalary_Click);
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
-            this.label19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
-            this.label19.Location = new System.Drawing.Point(165, 595);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(73, 21);
-            this.label19.TabIndex = 46;
-            this.label19.Text = "Fetched:";
-            // 
-            // txtShowTotalSalary
-            // 
-            this.txtShowTotalSalary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.txtShowTotalSalary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtShowTotalSalary.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.txtShowTotalSalary.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.txtShowTotalSalary.Location = new System.Drawing.Point(240, 592);
-            this.txtShowTotalSalary.Name = "txtShowTotalSalary";
-            this.txtShowTotalSalary.ReadOnly = true;
-            this.txtShowTotalSalary.Size = new System.Drawing.Size(130, 30);
-            this.txtShowTotalSalary.TabIndex = 47;
+            this.btnSearchIcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.btnSearchIcon.Location = new System.Drawing.Point(737, 670);
+            this.btnSearchIcon.Name = "btnSearchIcon";
+            this.btnSearchIcon.Size = new System.Drawing.Size(40, 35);
+            this.btnSearchIcon.TabIndex = 51;
+            this.btnSearchIcon.Text = "🔍";
+            this.btnSearchIcon.UseVisualStyleBackColor = true;
+            this.btnSearchIcon.Click += new System.EventHandler(this.btnSearchIcon_Click);
             // 
             // SalaryForm
             // 
@@ -605,13 +635,8 @@ namespace RegisterFormWinforms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.ClientSize = new System.Drawing.Size(850, 750);
-            this.Controls.Add(this.txtShowTotalSalary);
-            this.Controls.Add(this.label19);
-            this.Controls.Add(this.btnGetSalary);
-            this.Controls.Add(this.cmbSearchMonths);
-            this.Controls.Add(this.txtSearchEntryNo);
-            this.Controls.Add(this.label18);
-            this.Controls.Add(this.label17);
+            this.Controls.Add(this.btnSearchIcon);
+            this.Controls.Add(this.panelFetchSalary);
             this.Controls.Add(this.panelHeader);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnDelete);
@@ -655,6 +680,8 @@ namespace RegisterFormWinforms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Salary Management";
             this.Load += new System.EventHandler(this.SalaryForm_Load);
+            this.panelFetchSalary.ResumeLayout(false);
+            this.panelFetchSalary.PerformLayout();
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
             this.ResumeLayout(false);
@@ -663,7 +690,7 @@ namespace RegisterFormWinforms
         }
 
         #endregion
-
+        private System.Windows.Forms.Panel panelFetchSalary;
         private System.Windows.Forms.Panel panelHeader;
         private System.Windows.Forms.Label labelHeader;
         private System.Windows.Forms.Label label1;
@@ -702,6 +729,7 @@ namespace RegisterFormWinforms
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnClear;
+        
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox txtSearchEntryNo;
@@ -709,5 +737,6 @@ namespace RegisterFormWinforms
         private System.Windows.Forms.Button btnGetSalary;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox txtShowTotalSalary;
+        private System.Windows.Forms.Button btnSearchIcon;
     }
 }

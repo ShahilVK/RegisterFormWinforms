@@ -68,7 +68,15 @@ namespace RegisterFormWinforms
 
             AutoFillSalaryBreakup();
 
-            
+
+            cmbMonth.Items.Insert(0, "Select Month");
+            cmbMonth.SelectedIndex = 0;
+
+
+            cmbSearchMonths.Items.Insert(0, "Select Month");
+            cmbSearchMonths.SelectedIndex = 0;
+
+
         }
 
         private void SalaryForm_Shown(object sender, EventArgs e)
@@ -129,7 +137,7 @@ namespace RegisterFormWinforms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (cmbMonth.SelectedIndex == -1)
+            if (cmbMonth.SelectedIndex == 0)
             {
                 MessageBox.Show("Select Month");
                 return;
@@ -157,6 +165,9 @@ namespace RegisterFormWinforms
                     cmd.Parameters.AddWithValue("@Total", Convert.ToDecimal(txtTotalSalary.Text));
                     cmd.Parameters.AddWithValue("@Month", cmbMonth.Text);
                     cmd.Parameters.AddWithValue("@Date", dtDate.Value);
+                    cmd.Parameters.AddWithValue("@WorkingDays", string.IsNullOrWhiteSpace(txtWorkingDays.Text) ? 0 : Convert.ToInt32(txtWorkingDays.Text));
+                    cmd.Parameters.AddWithValue("@PresentDays", string.IsNullOrWhiteSpace(txtPresentDays.Text) ? 0 : Convert.ToInt32(txtPresentDays.Text));
+                    cmd.Parameters.AddWithValue("@LWP", string.IsNullOrWhiteSpace(txtLWP.Text) ? 0 : Convert.ToInt32(txtLWP.Text));
 
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Salary Saved Successfully ✅");
@@ -180,6 +191,9 @@ namespace RegisterFormWinforms
             txtMessExpenses.Clear();
             txtAdvance.Clear();
             txtTotalSalary.Clear();
+            txtWorkingDays.Clear();
+            txtPresentDays.Clear();
+            txtLWP.Clear();
 
             cmbMonth.SelectedIndex = DateTime.Now.Month - 1;
             dtDate.Value = DateTime.Today;
@@ -205,7 +219,7 @@ namespace RegisterFormWinforms
                 return;
             }
 
-            if (cmbMonth.SelectedIndex == -1)
+            if (cmbMonth.SelectedIndex == 0)
             {
                 MessageBox.Show("Select month to delete salary");
                 return;
@@ -303,7 +317,7 @@ namespace RegisterFormWinforms
                 return;
             }
 
-            if (cmbMonth.SelectedIndex == -1)
+            if (cmbMonth.SelectedIndex == 0)
             {
                 MessageBox.Show("Select month");
                 return;
@@ -357,15 +371,7 @@ namespace RegisterFormWinforms
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(
-                "Do you want to clear all fields?",
-                "Clear Form",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (result == DialogResult.No)
-                return;
-
+            
             txtIncentive.Clear();
             txtExpenses.Clear();
             txtMessExpenses.Clear();
@@ -373,15 +379,20 @@ namespace RegisterFormWinforms
             txtWorkingDays.Clear();
             txtPresentDays.Clear();
             txtLWP.Clear();
-            txtTotalSalary.Clear();
+            txtSearchEntryNo.Clear();
+            cmbMonth.SelectedIndex = 0;
+            cmbSearchMonths.SelectedIndex = 0;
+            txtShowTotalSalary.Clear();
 
-            cmbMonth.SelectedIndex = DateTime.Now.Month - 1;
             dtDate.Value = DateTime.Today;
 
             AutoFillSalaryBreakup();
 
             txtWorkingDays.Focus();
         }
+
+
+       
 
         private void btnGetSalary_Click(object sender, EventArgs e)
         {
@@ -446,18 +457,168 @@ namespace RegisterFormWinforms
 
         private void cmbSearchMonths_Enter(object sender, EventArgs e)
         {
-            cmbSearchMonths.DroppedDown = true;
+            this.BeginInvoke(new Action(() =>
+            {
+                cmbSearchMonths.DroppedDown = true;
+            }));
         }
 
         private void cmbMonth_Enter(object sender, EventArgs e)
         {
-            cmbMonth.DroppedDown = true;
+            this.BeginInvoke(new Action(() =>
+            {
+                cmbMonth.DroppedDown = true;
+            }));
         }
 
         private void cmbMonth_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
                 txtWorkingDays.Focus();
+        }
+
+
+        private void btnSearchIcon_Click(object sender, EventArgs e)
+        {
+            Form popup = new Form();
+            popup.Width = 300;
+            popup.Height = 230;
+            popup.Text = "Search Salary";
+            popup.StartPosition = FormStartPosition.CenterScreen;
+            popup.FormBorderStyle = FormBorderStyle.FixedDialog;
+            popup.MaximizeBox = false;
+            popup.MinimizeBox = false;
+
+            Label lblEntry = new Label();
+            lblEntry.Text = "Entry No";
+            lblEntry.Left = 20;
+            lblEntry.Top = 20;
+
+            TextBox txtEntry = new TextBox();
+            txtEntry.Left = 20;
+            txtEntry.Top = 45;
+            txtEntry.Width = 240;
+
+            Label lblMonth = new Label();
+            lblMonth.Text = "Month";
+            lblMonth.Left = 20;
+            lblMonth.Top = 80;
+
+            ComboBox cmbMonthPopup = new ComboBox();
+            cmbMonthPopup.Left = 20;
+            cmbMonthPopup.Top = 105;
+            cmbMonthPopup.Width = 240;
+            cmbMonthPopup.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            cmbMonthPopup.Items.AddRange(new string[]
+            {
+        "January","February","March","April","May","June",
+        "July","August","September","October","November","December"
+            });
+
+            Button btnSearch = new Button();
+            btnSearch.Text = "Search";
+            btnSearch.Left = 90;
+            btnSearch.Top = 150;
+            btnSearch.Width = 100;
+
+            popup.Controls.Add(lblEntry);
+            popup.Controls.Add(txtEntry);
+            popup.Controls.Add(lblMonth);
+            popup.Controls.Add(cmbMonthPopup);
+            popup.Controls.Add(btnSearch);
+
+            txtEntry.KeyDown += (s, ev) =>
+            {
+                if (ev.KeyCode == Keys.Enter)
+                {
+                    cmbMonthPopup.DroppedDown = true;
+                    ev.SuppressKeyPress = true;
+                    cmbMonthPopup.Focus();
+                }
+            };
+
+            cmbMonthPopup.KeyDown += (s, ev) =>
+            {
+                if (ev.KeyCode == Keys.Enter)
+                {
+                    ev.SuppressKeyPress = true;
+                    btnSearch.PerformClick();
+                }
+            };
+
+            btnSearch.Click += (s, ev) =>
+            {
+                if (txtEntry.Text == "")
+                {
+                    MessageBox.Show("Enter Entry No");
+                    txtEntry.Focus();
+                    return;
+                }
+
+                if (cmbMonthPopup.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Select Month");
+                    cmbMonthPopup.Focus();
+                    return;
+                }
+
+                string entryNo = txtEntry.Text;
+                string month = cmbMonthPopup.Text;
+
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+                    con.Open();
+
+                    try
+                    {
+                        SqlCommand cmd = new SqlCommand("sp_SearchSalaryByEntryNo", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@EntryNo", entryNo);
+                        cmd.Parameters.AddWithValue("@Month", month);
+
+                        SqlDataReader dr = cmd.ExecuteReader();
+
+                        if (dr.Read())
+                        {
+                            txtEntryNo.Text = dr["EntryNo"].ToString();
+                            txtName.Text = dr["Name"].ToString();
+                            txtSalary.Text = dr["Salary"].ToString();
+                            txtBasicPay.Text = dr["Basic"].ToString();
+                            txtHRA.Text = dr["HRA"].ToString();
+                            txtConveyance.Text = dr["Conveyance"].ToString();
+                            txtIncentive.Text = dr["Incentive"].ToString();
+                            txtExpenses.Text = dr["Expenses"].ToString();
+                            txtMessExpenses.Text = dr["Mess"].ToString();
+                            txtAdvance.Text = dr["Advance"].ToString();
+                            txtTotalSalary.Text = dr["Total"].ToString();
+                            cmbMonth.Text = dr["Month"].ToString();
+
+                            if (dr["Date"] != DBNull.Value)
+                                dtDate.Value = Convert.ToDateTime(dr["Date"]);
+
+                            txtWorkingDays.Text = dr["WorkingDays"].ToString();
+                            txtPresentDays.Text = dr["PresentDays"].ToString();
+                            txtLWP.Text = dr["LWP"].ToString();
+
+                            MessageBox.Show("Salary loaded successfully");
+                            popup.Close();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Salary not found");
+                        }
+
+                        dr.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            };
+
+            popup.ShowDialog();
         }
     }
 }

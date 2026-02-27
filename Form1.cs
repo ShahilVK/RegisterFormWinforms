@@ -18,7 +18,7 @@ namespace RegisterFormWinforms
         string imagePath = "";
 
         bool isClearing = false;
-
+         
 
         public Form1()
         {
@@ -1539,7 +1539,12 @@ namespace RegisterFormWinforms
         private void cmbUsers_Enter(object sender, EventArgs e)
         {
             LoadEmployeeNames();
-            cmbUsers.DroppedDown = true;
+            this.BeginInvoke(new Action(() =>
+            {
+              
+                cmbUsers.DroppedDown = true;
+            }));
+
         }
 
        
