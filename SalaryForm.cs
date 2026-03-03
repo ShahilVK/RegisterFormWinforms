@@ -12,6 +12,7 @@ namespace RegisterFormWinforms
         public SalaryForm(string entryNo, string name, string salary)
         {
             InitializeComponent();
+            cmbMonth.SelectedIndexChanged += cmbMonth_SelectedIndexChanged;
 
             dtDate.MaxDate = DateTime.Today;
 
@@ -55,10 +56,14 @@ namespace RegisterFormWinforms
             txtWorkingDays.TextChanged += (s, e) => CalculateLWP();
             txtPresentDays.TextChanged += (s, e) => CalculateLWP();
 
+
+
             this.Shown += SalaryForm_Shown;
 
-
         }
+
+        private string _currentEntryNo = "";
+        private bool _isLoading = false;
 
 
         private void SalaryForm_Load(object sender, EventArgs e)
@@ -77,6 +82,52 @@ namespace RegisterFormWinforms
             cmbSearchMonths.SelectedIndex = 0;
 
 
+            btnUpdate.Enabled = false;
+            btnDelete.Enabled = false;
+
+
+        }
+
+        bool ValidateSalaryForm()
+        {
+            if (txtEntryNo.Text.Trim() == "")
+            {
+                MessageBox.Show("Employee not selected");
+                return false;
+            }
+
+            if (cmbMonth.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select Month");
+                cmbMonth.Focus();
+                return false;
+            }
+
+            if (txtWorkingDays.Text.Trim() == "")
+            {
+                MessageBox.Show("Enter Working Days");
+                txtWorkingDays.Focus();
+                return false;
+            }
+
+            if (txtPresentDays.Text.Trim() == "")
+            {
+                MessageBox.Show("Enter Present Days");
+                txtPresentDays.Focus();
+                return false;
+            }
+
+            int working = Convert.ToInt32(txtWorkingDays.Text);
+            int present = Convert.ToInt32(txtPresentDays.Text);
+
+            if (present > working)
+            {
+                MessageBox.Show("Present days cannot be greater than working days");
+                txtPresentDays.Focus();
+                return false;
+            }
+
+            return true;
         }
 
         private void SalaryForm_Shown(object sender, EventArgs e)
@@ -137,11 +188,29 @@ namespace RegisterFormWinforms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+
+            if(!ValidateSalaryForm())
+                return;
+            if(txtName.Text.Trim() == "")
+            {
+                MessageBox.Show("Employee name is empty");
+                return;
+            }
             if (cmbMonth.SelectedIndex == 0)
             {
                 MessageBox.Show("Select Month");
+                cmbMonth.Focus();
                 return;
             }
+
+            DialogResult result = MessageBox.Show(
+       "Do you want to save this employee?",
+       "Confirm Save",
+       MessageBoxButtons.YesNo,
+       MessageBoxIcon.Question);
+
+            if (result == DialogResult.No)
+                return;
 
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -173,6 +242,9 @@ namespace RegisterFormWinforms
                     MessageBox.Show("Salary Saved Successfully ✅");
 
                     ClearForm();
+                    btnUpdate.Enabled = true;
+                    btnDelete.Enabled = true;
+                    btnSave.Enabled = false;
                 }
                 catch (Exception ex)
                 {
@@ -195,8 +267,7 @@ namespace RegisterFormWinforms
             txtPresentDays.Clear();
             txtLWP.Clear();
 
-            cmbMonth.SelectedIndex = DateTime.Now.Month - 1;
-            dtDate.Value = DateTime.Today;
+            cmbMonth.SelectedIndex = 0;
 
             AutoFillSalaryBreakup(); 
         }
@@ -250,6 +321,10 @@ namespace RegisterFormWinforms
 
                     MessageBox.Show("Salary Deleted Successfully 🗑");
                     ClearForm();
+                    btnSave.Enabled = true;
+                    btnDelete.Enabled = false;
+                    btnUpdate.Enabled = false;
+                    btnClear.Enabled = true;
                 }
                 catch (Exception ex)
                 {
@@ -353,11 +428,20 @@ namespace RegisterFormWinforms
                     cmd.Parameters.AddWithValue("@Adv", string.IsNullOrWhiteSpace(txtAdvance.Text) ? 0 : Convert.ToDecimal(txtAdvance.Text));
                     cmd.Parameters.AddWithValue("@Total", Convert.ToDecimal(txtTotalSalary.Text));
                     cmd.Parameters.AddWithValue("@Date", dtDate.Value);
+                    cmd.Parameters.AddWithValue("@WorkingDays",
+                    string.IsNullOrWhiteSpace(txtWorkingDays.Text) ? 0 : Convert.ToInt32(txtWorkingDays.Text));
+                    cmd.Parameters.AddWithValue("@PresentDays",
+                    string.IsNullOrWhiteSpace(txtPresentDays.Text) ? 0 : Convert.ToInt32(txtPresentDays.Text));
+                    cmd.Parameters.AddWithValue("@LWP",
+                    string.IsNullOrWhiteSpace(txtLWP.Text) ? 0 : Convert.ToInt32(txtLWP.Text));
 
                     cmd.ExecuteNonQuery();
 
                     MessageBox.Show("Salary Updated Successfully ✏");
                     ClearForm();
+                    btnUpdate.Enabled = false;
+                    btnDelete.Enabled = false;
+                    
                 }
                 catch (Exception ex)
                 {
@@ -389,10 +473,14 @@ namespace RegisterFormWinforms
             AutoFillSalaryBreakup();
 
             txtWorkingDays.Focus();
+
+            btnUpdate.Enabled = false;
+            btnDelete.Enabled = false;
+            btnSave.Enabled = true;
         }
 
 
-       
+
 
         private void btnGetSalary_Click(object sender, EventArgs e)
         {
@@ -406,6 +494,7 @@ namespace RegisterFormWinforms
             if (cmbSearchMonths.SelectedIndex == -1)
             {
                 MessageBox.Show("Select Month");
+                cmbSearchMonths.Focus();
                 return;
             }
 
@@ -415,30 +504,29 @@ namespace RegisterFormWinforms
 
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("sp_GetTotalSalary", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlCommand cmd = new SqlCommand(
+                        "SELECT dbo.fn_GetTotalSalary(@EntryNo, @Month)", con);
 
                     cmd.Parameters.AddWithValue("@EntryNo", txtSearchEntryNo.Text);
                     cmd.Parameters.AddWithValue("@Month", cmbSearchMonths.Text);
 
                     object result = cmd.ExecuteScalar();
 
-                    if (result != null)
-                    {
-                        txtShowTotalSalary.Text = Convert.ToDecimal(result).ToString("0.00");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message.Contains("Salary not found"))
+                    decimal total = Convert.ToDecimal(result);
+
+                    if (total == 0)
                     {
                         MessageBox.Show("Salary not found for this month");
                         txtShowTotalSalary.Clear();
                     }
                     else
                     {
-                        MessageBox.Show("Error : " + ex.Message);
+                        txtShowTotalSalary.Text = total.ToString("0.00");
                     }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error : " + ex.Message);
                 }
             }
         }
@@ -476,7 +564,6 @@ namespace RegisterFormWinforms
             if (e.KeyCode == Keys.Enter)
                 txtWorkingDays.Focus();
         }
-
 
         private void btnSearchIcon_Click(object sender, EventArgs e)
         {
@@ -601,6 +688,9 @@ namespace RegisterFormWinforms
                             txtPresentDays.Text = dr["PresentDays"].ToString();
                             txtLWP.Text = dr["LWP"].ToString();
 
+                            _currentEntryNo = entryNo;   
+                            _isLoading = false;
+
                             MessageBox.Show("Salary loaded successfully");
                             popup.Close();
                         }
@@ -610,6 +700,9 @@ namespace RegisterFormWinforms
                         }
 
                         dr.Close();
+                        btnSave.Enabled = false;
+                        btnUpdate.Enabled = true;
+                        btnDelete.Enabled = true;
                     }
                     catch (Exception ex)
                     {
@@ -619,6 +712,77 @@ namespace RegisterFormWinforms
             };
 
             popup.ShowDialog();
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Next button clicked");
+        }
+
+        private void cmbMonth_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_isLoading) return;  
+
+            if (string.IsNullOrEmpty(_currentEntryNo))
+                return;
+
+            if (cmbMonth.SelectedIndex == 0)
+                return;
+
+            LoadSalaryByMonth(_currentEntryNo, cmbMonth.Text);
+        }
+
+        private void LoadSalaryByMonth(string entryNo, string month)
+        {
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                con.Open();
+
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("sp_SearchSalaryByEntryNo", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@EntryNo", entryNo);
+                    cmd.Parameters.AddWithValue("@Month", month);
+
+                    SqlDataReader dr = cmd.ExecuteReader();
+
+                    if (dr.Read())
+                    {
+                        _isLoading = true;
+
+                        txtSalary.Text = dr["Salary"].ToString();
+                        txtBasicPay.Text = dr["Basic"].ToString();
+                        txtHRA.Text = dr["HRA"].ToString();
+                        txtConveyance.Text = dr["Conveyance"].ToString();
+                        txtIncentive.Text = dr["Incentive"].ToString();
+                        txtExpenses.Text = dr["Expenses"].ToString();
+                        txtMessExpenses.Text = dr["Mess"].ToString();
+                        txtAdvance.Text = dr["Advance"].ToString();
+                        txtTotalSalary.Text = dr["Total"].ToString();
+
+                        if (dr["Date"] != DBNull.Value)
+                            dtDate.Value = Convert.ToDateTime(dr["Date"]);
+
+                        txtWorkingDays.Text = dr["WorkingDays"].ToString();
+                        txtPresentDays.Text = dr["PresentDays"].ToString();
+                        txtLWP.Text = dr["LWP"].ToString();
+
+                        _isLoading = false;
+                    }
+                    else
+                    {
+                        ClearForm();
+                        MessageBox.Show("Salary not found for selected month");
+                    }
+
+                    dr.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error : " + ex.Message);
+                }
+            }
         }
     }
 }

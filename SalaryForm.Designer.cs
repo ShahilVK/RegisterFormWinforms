@@ -81,6 +81,7 @@ namespace RegisterFormWinforms
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnSearchIcon = new System.Windows.Forms.Button();
+            this.btnNext = new System.Windows.Forms.Button();
             this.panelFetchSalary.SuspendLayout();
             this.panelHeader.SuspendLayout();
             this.SuspendLayout();
@@ -621,7 +622,7 @@ namespace RegisterFormWinforms
             // btnSearchIcon
             // 
             this.btnSearchIcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.btnSearchIcon.Location = new System.Drawing.Point(737, 670);
+            this.btnSearchIcon.Location = new System.Drawing.Point(740, 665);
             this.btnSearchIcon.Name = "btnSearchIcon";
             this.btnSearchIcon.Size = new System.Drawing.Size(40, 35);
             this.btnSearchIcon.TabIndex = 51;
@@ -629,12 +630,29 @@ namespace RegisterFormWinforms
             this.btnSearchIcon.UseVisualStyleBackColor = true;
             this.btnSearchIcon.Click += new System.EventHandler(this.btnSearchIcon_Click);
             // 
+
+            // btnNext
+            // 
+            this.btnNext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.btnNext.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnNext.FlatAppearance.BorderSize = 0;
+            this.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNext.Font = new System.Drawing.Font("Segoe UI Semibold", 10.2F, System.Drawing.FontStyle.Bold);
+            this.btnNext.ForeColor = System.Drawing.Color.White;
+            this.btnNext.Location = new System.Drawing.Point(720, 695);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(110, 42);
+            this.btnNext.TabIndex = 52;
+            this.btnNext.Text = "Next >";
+            this.btnNext.UseVisualStyleBackColor = false;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            this.Controls.Add(this.btnNext);
             // SalaryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
-            this.ClientSize = new System.Drawing.Size(850, 750);
+            this.ClientSize = new System.Drawing.Size(850, 753);
             this.Controls.Add(this.btnSearchIcon);
             this.Controls.Add(this.panelFetchSalary);
             this.Controls.Add(this.panelHeader);
@@ -738,5 +756,6 @@ namespace RegisterFormWinforms
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox txtShowTotalSalary;
         private System.Windows.Forms.Button btnSearchIcon;
+        private System.Windows.Forms.Button btnNext;
     }
 }
