@@ -65,6 +65,8 @@ namespace RegisterFormWinforms
         private string _currentEntryNo = "";
         private bool _isLoading = false;
 
+        private string _lastLoadedMonth = "";
+
 
         private void SalaryForm_Load(object sender, EventArgs e)
         {
@@ -80,6 +82,8 @@ namespace RegisterFormWinforms
 
             cmbSearchMonths.Items.Insert(0, "Select Month");
             cmbSearchMonths.SelectedIndex = 0;
+
+           
 
 
             btnUpdate.Enabled = false;
@@ -262,7 +266,7 @@ namespace RegisterFormWinforms
             txtExpenses.Clear();
             txtMessExpenses.Clear();
             txtAdvance.Clear();
-            txtTotalSalary.Clear();
+            //txtTotalSalary.Clear();
             txtWorkingDays.Clear();
             txtPresentDays.Clear();
             txtLWP.Clear();
@@ -345,14 +349,6 @@ namespace RegisterFormWinforms
         }
 
         private void txtPresentDays_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                txtLWP.Focus();
-            }
-        }
-
-        private void txtLWP_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -455,7 +451,10 @@ namespace RegisterFormWinforms
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            
+
+            _isLoading = true;      
+            _currentEntryNo = "";
+
             txtIncentive.Clear();
             txtExpenses.Clear();
             txtMessExpenses.Clear();
@@ -477,6 +476,8 @@ namespace RegisterFormWinforms
             btnUpdate.Enabled = false;
             btnDelete.Enabled = false;
             btnSave.Enabled = true;
+
+            _isLoading = false;
         }
 
 
@@ -597,6 +598,9 @@ namespace RegisterFormWinforms
             cmbMonthPopup.Width = 240;
             cmbMonthPopup.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            cmbMonthPopup.Items.Insert(0, "Select Month");
+            cmbMonthPopup.SelectedIndex = 0;
+
             cmbMonthPopup.Items.AddRange(new string[]
             {
         "January","February","March","April","May","June",
@@ -643,7 +647,7 @@ namespace RegisterFormWinforms
                     return;
                 }
 
-                if (cmbMonthPopup.SelectedIndex == -1)
+                if (cmbMonthPopup.SelectedIndex == 0)
                 {
                     MessageBox.Show("Select Month");
                     cmbMonthPopup.Focus();
@@ -680,6 +684,7 @@ namespace RegisterFormWinforms
                             txtAdvance.Text = dr["Advance"].ToString();
                             txtTotalSalary.Text = dr["Total"].ToString();
                             cmbMonth.Text = dr["Month"].ToString();
+                            _lastLoadedMonth = dr["Month"].ToString();
 
                             if (dr["Date"] != DBNull.Value)
                                 dtDate.Value = Convert.ToDateTime(dr["Date"]);
@@ -768,12 +773,21 @@ namespace RegisterFormWinforms
                         txtPresentDays.Text = dr["PresentDays"].ToString();
                         txtLWP.Text = dr["LWP"].ToString();
 
+                        _lastLoadedMonth = month;
+
                         _isLoading = false;
                     }
+                    
                     else
                     {
-                        ClearForm();
                         MessageBox.Show("Salary not found for selected month");
+
+                        if (!string.IsNullOrEmpty(_lastLoadedMonth))
+                        {
+                            _isLoading = true;
+                            cmbMonth.Text = _lastLoadedMonth;
+                            _isLoading = false;
+                        }
                     }
 
                     dr.Close();
@@ -783,6 +797,12 @@ namespace RegisterFormWinforms
                     MessageBox.Show("Error : " + ex.Message);
                 }
             }
+        }
+
+        private void txtAdvance_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                btnSave.Focus();
         }
     }
 }

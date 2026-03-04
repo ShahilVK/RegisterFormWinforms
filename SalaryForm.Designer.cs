@@ -479,6 +479,7 @@ namespace RegisterFormWinforms
             this.txtAdvance.Name = "txtAdvance";
             this.txtAdvance.Size = new System.Drawing.Size(200, 30);
             this.txtAdvance.TabIndex = 24;
+            this.txtAdvance.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtAdvance_KeyDown);
             // 
             // txtWorkingDays
             // 
@@ -508,8 +509,7 @@ namespace RegisterFormWinforms
             this.txtLWP.Name = "txtLWP";
             this.txtLWP.Size = new System.Drawing.Size(200, 30);
             this.txtLWP.TabIndex = 27;
-            this.txtLWP.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtLWP_KeyDown);
-            // 
+            //// 
             // label15
             // 
             this.label15.AutoSize = true;
@@ -630,7 +630,6 @@ namespace RegisterFormWinforms
             this.btnSearchIcon.UseVisualStyleBackColor = true;
             this.btnSearchIcon.Click += new System.EventHandler(this.btnSearchIcon_Click);
             // 
-
             // btnNext
             // 
             this.btnNext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
@@ -646,13 +645,14 @@ namespace RegisterFormWinforms
             this.btnNext.Text = "Next >";
             this.btnNext.UseVisualStyleBackColor = false;
             this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
-            this.Controls.Add(this.btnNext);
+            // 
             // SalaryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.ClientSize = new System.Drawing.Size(850, 753);
+            this.Controls.Add(this.btnNext);
             this.Controls.Add(this.btnSearchIcon);
             this.Controls.Add(this.panelFetchSalary);
             this.Controls.Add(this.panelHeader);
