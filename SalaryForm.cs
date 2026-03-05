@@ -100,7 +100,7 @@ namespace RegisterFormWinforms
                 return false;
             }
 
-            if (cmbMonth.SelectedIndex == -1)
+            if (cmbMonth.SelectedIndex == 0)
             {
                 MessageBox.Show("Select Month");
                 cmbMonth.Focus();
@@ -266,7 +266,6 @@ namespace RegisterFormWinforms
             txtExpenses.Clear();
             txtMessExpenses.Clear();
             txtAdvance.Clear();
-            //txtTotalSalary.Clear();
             txtWorkingDays.Clear();
             txtPresentDays.Clear();
             txtLWP.Clear();
