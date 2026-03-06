@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace RegisterFormWinforms
@@ -12,6 +13,42 @@ namespace RegisterFormWinforms
         public SalaryForm(string entryNo, string name, string salary)
         {
             InitializeComponent();
+
+            txtEntryNo.Enter += TextBox_Enter;
+            txtEntryNo.Leave += TextBox_Leave;
+
+            txtName.Enter += TextBox_Enter;
+            txtName.Leave += TextBox_Leave;
+
+            txtSalary.Enter += TextBox_Enter;
+            txtSalary.Leave += TextBox_Leave;
+
+            txtBasicPay.Enter += TextBox_Enter;
+            txtBasicPay.Leave += TextBox_Leave;
+
+            txtHRA.Enter += TextBox_Enter;
+            txtHRA.Leave += TextBox_Leave;
+
+            txtConveyance.Enter += TextBox_Enter;
+            txtConveyance.Leave += TextBox_Leave;
+
+            txtIncentive.Enter += TextBox_Enter;
+            txtIncentive.Leave += TextBox_Leave;
+
+            txtExpenses.Enter += TextBox_Enter;
+            txtExpenses.Leave += TextBox_Leave;
+
+            txtMessExpenses.Enter += TextBox_Enter;
+            txtMessExpenses.Leave += TextBox_Leave;
+
+            txtAdvance.Enter += TextBox_Enter;
+            txtAdvance.Leave += TextBox_Leave;
+
+            txtWorkingDays.Enter += TextBox_Enter;
+            txtWorkingDays.Leave += TextBox_Leave;
+
+            txtPresentDays.Enter += TextBox_Enter;
+            txtPresentDays.Leave += TextBox_Leave;
             cmbMonth.SelectedIndexChanged += cmbMonth_SelectedIndexChanged;
 
             dtDate.MaxDate = DateTime.Today;
@@ -802,6 +839,18 @@ namespace RegisterFormWinforms
         {
             if (e.KeyCode == Keys.Enter)
                 btnSave.Focus();
+        }
+
+        private void TextBox_Enter(object sender, EventArgs e)
+        {
+            TextBox txt = sender as TextBox;
+            txt.BackColor = Color.SkyBlue;
+        }
+
+        private void TextBox_Leave(object sender, EventArgs e)
+        {
+            TextBox txt = sender as TextBox;
+            txt.BackColor = Color.White;
         }
     }
 }
